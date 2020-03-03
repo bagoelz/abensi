@@ -1,0 +1,118 @@
+<div id="products" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- HEADER -->
+        <div class="header accent" fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-sm="row"
+            fxLayoutAlign.gt-sm="space-between center">
+
+            <!-- APP TITLE -->
+            <div class="logo mb-24 mb-md-0" fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="logo-icon s-32 mr-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    person
+                </mat-icon>
+                <span class="logo-text h1" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    TTP
+                </span>
+            </div>
+            <!-- / APP TITLE -->
+
+            <div class="logo mb-24 mb-md-0" fxLayout="row" fxLayoutAlign="start center" *ngIf="auth.level== 1">
+                <mat-form-field appearance="outline" class="category-selector" *ngIf="auth.level==1">
+                    <mat-label>Pilih Capdis</mat-label>
+                    <mat-select [(ngModel)]="Capdis.pilih" (selectionChange)="onChange($event.value)">
+                        <mat-option [value]="'null'">
+                            Pilih Capdis
+                        </mat-option>
+                        <mat-option *ngFor=" let item of cabang" [value]="item.id">
+                            {{item.nama}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <!-- ADD BUTTON -->
+            <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0" (click)="generatePdf()">
+                <span>Cetak PDF</span>
+            </button>
+            <!-- / ADD BUTTON -->
+
+        </div>
+        <!-- / HEADER -->
+        <div class="search-wrapper mx-32 mx-md-0">
+            <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon style="color: #707070;">search</mat-icon>
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Cari Data TTP"
+                    style="color: #707070;">
+            </div>
+        </div>
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+
+            <mat-table #table [dataSource]="dataSource" matSort [@animateStagger]="{value:'50'}" fusePerfectScrollbar>
+                <!-- ID Column -->
+                <ng-container matColumnDef="nama">
+                    <mat-header-cell *matHeaderCellDef>Nama Lengkap</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <p class="text-truncate" style="white-space: unset !important;">{{element.fullname}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="tpm">
+                    <mat-header-cell *matHeaderCellDef>Total Potongan Masuk</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <p class="text-truncate">{{element.total_potongan_masuk | currency: 'Rp. ':'symbol'}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="tpk">
+                    <mat-header-cell *matHeaderCellDef>Total Potongan Keluar</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <p class="text-truncate">{{element.total_potongan_keluar | currency: 'Rp. ':'symbol'}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Category Column -->
+                <ng-container matColumnDef="pkp">
+                    <mat-header-cell *matHeaderCellDef>Jumlah pkp</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <p class="text-truncate">{{element.jumlah_pkp | currency: 'Rp. ':'symbol'}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="tpot">
+                    <mat-header-cell *matHeaderCellDef>Total Potongan</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <p class="text-truncate">{{element.total_potongan | currency: 'Rp. ':'symbol'}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="tpend">
+                    <mat-header-cell *matHeaderCellDef>Total Pendapatan</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <p class="text-truncate">{{element.pendapatan | currency: 'Rp. ':'symbol'}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+                <mat-row (click)="cetak(element)" *matRowDef="let element; columns: displayedColumns;" class="product"
+                    style="cursor: pointer;" matRipple [@animate]="{value:'*',params:{y:'100%'}}">
+                </mat-row>
+
+            </mat-table>
+            <!-- [length]="dataSource.filteredData.length" -->
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+
+        </div>
+        <!-- / CONTENT CARD -->
+    </div>
+    <!-- / CENTER -->
+</div>

@@ -1,0 +1,149 @@
+<app-progress-spinner class="example-margin" [color]="color" [mode]="mode" [value]="value" [backdropEnabled]="true" [displayProgressSpinner]="spinnerWithoutBackdrop" >
+</app-progress-spinner>
+<div id="products" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- HEADER -->
+        <div class="header accent" fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-sm="row"
+            fxLayoutAlign.gt-sm="space-between center">
+
+            <!-- APP TITLE -->
+            <div class="logo mb-24 mb-md-0" fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="logo-icon s-32 mr-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    person
+                </mat-icon>
+                <span class="logo-text h1" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    Pengguna
+                </span>
+            </div>
+            <!-- / APP TITLE -->
+
+
+            <div class="logo mb-24 mb-md-0" fxLayout="row" fxLayoutAlign="start center" *ngIf="auth.level== 1">
+                <mat-form-field appearance="outline" class="category-selector" *ngIf="auth.level==1">
+                    <mat-label>Pilih Capdis</mat-label>
+                    <mat-select [(ngModel)]="Capdis" (selectionChange)="onChange($event.value)">
+                        <mat-option [value]="'null'">
+                            Pilih Capdis
+                        </mat-option>
+                        <mat-option *ngFor=" let item of cabang" [value]="item.id">
+                            {{item.nama}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+
+            <!-- ADD BUTTON -->
+            <!-- <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0" (click)="openDialog()"
+                *ngIf="auth.level== 2 || auth.level== 1">
+                <span>Tambah Pengguna</span>
+            </button> -->
+
+            <div>
+                <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0"
+                    style="margin-right: 10px !important" (click)="openJadwal()" *ngIf="auth.level==1">
+                    <span>Setting Jadwal</span>
+                </button>
+
+                <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0" (click)="openDialog()">
+                    <span>Tambah Pengguna</span>
+                </button>
+            </div>
+            <!-- / ADD BUTTON -->
+
+        </div>
+        <!-- / HEADER -->
+
+        <div fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-sm="row"
+            fxLayoutAlign.gt-sm="space-between center">
+            <mat-chip-list [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}" style="padding-bottom: 10px;">
+                <!-- <mat-chip (click)="sadmin()" *ngIf="auth.level== 1 ">Super Admin</mat-chip>
+                <mat-chip (click)="admin()" *ngIf="auth.level== 1 ">Admin</mat-chip>
+                <mat-chip (click)="pengguna()" *ngIf="auth.level== 2 || auth.level== 1">Pengguna</mat-chip> -->
+
+                <mat-chip (click)="sadmin()" *ngIf="auth.level==1">Super Admin</mat-chip>
+                <mat-chip (click)="admin()" *ngIf="auth.level==1">Admin</mat-chip>
+                <mat-chip (click)="pengguna()">Pengguna</mat-chip>
+            </mat-chip-list>
+
+            <!-- SEARCH -->
+            <div class="search-wrapper mx-32 mx-md-0">
+                <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                    <mat-icon style="color: #707070;">search</mat-icon>
+                    <input (keyup)="applyFilter($event.target.value)" placeholder="Cari Data" style="color: #707070;">
+                </div>
+            </div>
+            <!-- / SEARCH -->
+        </div>
+
+        <!-- [src]="gambar || 'assets/images/avatars/profile.jpg'" -->
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+
+            <mat-table #table [dataSource]="dataSource" matSort [@animateStagger]="{value:'50'}" fusePerfectScrollbar>
+                <!-- src="{{imgUrl}}{{contact.user_picture}}"  -->
+                <ng-container matColumnDef="avatar">
+                    <mat-header-cell fxFlex="96px" *matHeaderCellDef></mat-header-cell>
+                    <mat-cell fxFlex="96px" *matCellDef="let contact">
+                        <img class="avatar" *ngIf="contact.user_picture !== null"
+                            src="{{imgUrl}}{{contact.user_picture}}" />
+                        <img class="avatar" *ngIf="contact.user_picture === null"
+                            src="https://www.pispi.or.id/images/default_photo.jpg" />
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="username">
+                    <mat-header-cell fxFlex="140px" *matHeaderCellDef>Username</mat-header-cell>
+                    <mat-cell fxFlex="140px" *matCellDef="let element">
+                        <p class="text-truncate">{{element.username}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- ID Column -->
+                <ng-container matColumnDef="nama">
+                    <mat-header-cell fxFlex="300px" *matHeaderCellDef>Nama Lengkap</mat-header-cell>
+                    <mat-cell fxFlex="300px" *matCellDef="let element">
+                        <p class="text-truncate">{{element.fullname}}</p>
+                    </mat-cell>
+                </ng-container>
+                <!-- Name Column -->
+
+                <!-- Category Column -->
+                <ng-container matColumnDef="gender">
+                    <mat-header-cell *matHeaderCellDef>Jenis Kelamin</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <p class="text-truncate" *ngIf="element.gender==='1'">Laki - laki</p>
+                        <p class="text-truncate" *ngIf="element.gender==='2'">Perempuan</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                    <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <p class="text-truncate" *ngIf="element.status==='1'">Aktif</p>
+                        <p class="text-truncate" *ngIf="element.status==='0'">Tidak Aktif</p>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+                <mat-row (click)="getRow(element)" *matRowDef="let element; columns: displayedColumns;" class="product"
+                    matRipple [@animate]="{value:'*',params:{y:'100%'}}">
+                </mat-row>
+
+            </mat-table>
+            <!-- [length]="dataSource.filteredData.length" -->
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+
+        </div>
+        <!-- / CONTENT CARD -->
+    </div>
+    <!-- / CENTER -->
+</div>

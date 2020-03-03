@@ -1,0 +1,132 @@
+<div class="dialog-content-wrapper">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="title dialog-title">{{title}}</span>
+            <button mat-icon-button [mat-dialog-close] aria-label="Close dialog" matTooltip="Tutup">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <div mat-dialog-content class="p-24 pb-0 m-0" fusePerfectScrollbar>
+        <form [formGroup]="cutiForm">
+            <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>NIP</mat-label>
+                    <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
+                    <input name="nip" formControlName="nip" matInput required [(ngModel)]="ModelCuti.nip"
+                        [matAutocomplete]="auto">
+                    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"
+                        (optionSelected)="onSelectionChanged($event)">
+                        <mat-option *ngFor="let item of filteredOptions | async" [value]="item.nip"
+                            [ngClass]="_allowSelection(item.nip)">
+                            {{item.nip}} - {{item.fullname}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </div>
+            <!-- nip: "123456789200903100"
+            fullname: "Mahesa Putra"
+            jabatan: "Kepala Seksi / KTU Gol. IV"
+            capdis: "Tes Rumah" -->
+            <div *ngFor="let item of tmpdata">
+                <div fxLayout="row" fxLayoutAlign="start start">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Nama Lengkap</mat-label>
+                        <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
+                        <input name="fullname" formControlName="fullname" matInput [(ngModel)]="item.fullname" readonly>
+                    </mat-form-field>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="start start">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Jabatan</mat-label>
+                        <mat-icon matSuffix class="secondary-text">star</mat-icon>
+                        <input name="jabatan" formControlName="jabatan" matInput [(ngModel)]="item.jabatan" readonly>
+                    </mat-form-field>
+                </div>
+
+                <div fxLayout="row" fxLayoutAlign="start start">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Capdis</mat-label>
+                        <mat-icon matSuffix class="secondary-text">star</mat-icon>
+                        <input name="capdis" formControlName="capdis" matInput [(ngModel)]="item.capdis" readonly>
+                    </mat-form-field>
+                </div>
+            </div>
+
+
+
+            <!-- <mat-label>Pilihan Pekerjaan</mat-label>
+                        <input type="text" placeholder="Pilihan Pekerjaan" matInput formControlName="jpekerjaan"
+                            [(ngModel)]="modelSpmk.jpekerjaan" [matAutocomplete]="auto">
+                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete"
+                            (optionSelected)="onSelectionChanged($event)">
+                            <mat-option *ngFor="let option of filteredOptions | async" [value]="option.nama"
+                                [ngClass]="_allowSelection(option)">
+                                {{option.nama}}
+                            </mat-option>
+                        </mat-autocomplete> -->
+
+
+            <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Mulai Cuti</mat-label>
+                    <!-- <mat-icon matSuffix class="secondary-text">star</mat-icon> -->
+                    <input name="mulai" formControlName="mulai" matInput [(ngModel)]="ModelCuti.mulai"
+                        (ngModelChange)="onDataChange($event)" [matDatepicker]="dp3" required readonly>
+                    <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                    <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Masuk Cuti</mat-label>
+                    <!-- <mat-icon matSuffix class="secondary-text">access_time</mat-icon> -->
+                    <input name="akhir" formControlName="akhir" matInput [(ngModel)]="ModelCuti.akhir" readonly
+                        (ngModelChange)="onDataChange2($event)" [matDatepicker]="dp4" required readonly>
+                    <mat-datepicker-toggle matSuffix [for]="dp4"></mat-datepicker-toggle>
+                    <mat-datepicker #dp4 disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Keterangan</mat-label>
+                    <mat-select placeholder="Keterangan" [(ngModel)]="ModelCuti.ket" formControlName="ket">
+                        <mat-option [value]="1"> SPT </mat-option>
+                        <mat-option [value]="2"> CUTI </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <span class="title dialog-title" style="margin-bottom: -12px; font-weight: 800;" *ngIf="files.length === 0">Upload File</span>
+            <div fxLayout="row" fxLayoutAlign="start start" *ngIf="files.length === 0">
+                <!-- <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto"> -->
+                <div class="uploadfilecontainer" (click)="openfile()">
+                    <input id="fileSrc" style="display:none" type="file" (change)="fileChange($event)"
+                        placeholder="Upload file" accept=".pdf,.jpg,.png,.pdf" >
+                </div>
+            </div>
+            <span class="title dialog-title" style="margin-bottom: -12px; font-weight: 800;" *ngIf="files.length !== 0 ">Click nama file untuk lihat lampiran</span>
+            <div fxLayout="row" fxLayoutAlign="start start" *ngIf="filename !==''">
+                <div class="files-list" *ngFor="let file of files;let i= index">
+                    <p (click)="OpenAfterUpload()" style="cursor: pointer;" matTooltip="TINJAU GAMBAR"> {{ file }} </p>
+                    <button class="delete-file" (click)="deleteAttachment(i)">
+                        <img src="../../assets/images/upload/delete.png">
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div mat-dialog-actions class="m-0 p-16" fxLayout="row" fxLayoutAlign="end center">
+        <button matTooltip="SIMPAN" mat-button class="save-button" aria-label="SAVE" color="accent"
+            (click)="simpan()">SIMPAN
+        </button>
+        <button [mat-dialog-close] matTooltip="TUTUP" mat-button class="save-button" aria-label="TUTUP"
+            color="warn">TUTUP
+        </button>
+    </div>
+</div>

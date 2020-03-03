@@ -1,0 +1,56 @@
+<div class="dialog-content-wrapper">
+
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="title dialog-title">Buat Capdis</span>
+            <button mat-icon-button [mat-dialog-close] aria-label="Close dialog" matTooltip="Tutup">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+
+        <mat-toolbar-row class="toolbar-bottom py-16" fxLayout="column" fxLayoutAlign="center center">
+            <!-- <img [src]="gambar || 'assets/images/avatars/profile.jpg'" class="avatar contact-avatar huge m-0"
+                matTooltip="Unggah Gambar" (click)="openfile()">
+            <input type="file" id="imgupload" class="file_input" (change)="getFileAttachment($event)"
+                style="display:none">
+            <div class="contact-name mt-8"></div> -->
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <div mat-dialog-content class="p-24 m-0" fusePerfectScrollbar>
+        <form name="capdisForm" [formGroup]="capdisForm">
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field fxFlex>
+                    <input matInput placeholder="Nama" required [(ngModel)]="ModelCapdis.nama" [formControl]="nama">
+                    <mat-error *ngIf="nama.invalid">
+                        Nama tidak boleh kosong
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field fxFlex>
+                    <input matInput placeholder="lat" required [(ngModel)]="ModelCapdis.lat" [formControl]="lat">
+                    <mat-error *ngIf="lat.invalid">
+                        Koordinat Lat tidak boleh kosong
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field fxFlex>
+                    <input matInput placeholder="lng" required [(ngModel)]="ModelCapdis.lng" [formControl]="lng">
+                    <mat-error *ngIf="lng.invalid">
+                        Koordinat lng tidak boleh kosong
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <!-- (click)="showToaster() -->
+            <div mat-dialog-actions class="m-0" fxLayout="row" fxLayoutAlign="space-between center">
+                <button mat-raised-button class="save-button mat-accent" aria-label="SAVE"
+                    [disabled]="capdisForm.invalid" (click)="onClick()">Simpan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

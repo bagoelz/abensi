@@ -1,0 +1,48 @@
+<div class="dialog-content-wrapper" *ngIf="data[1]===0">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="start center">
+            <span class="title dialog-title">Konfirmasi</span>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <div mat-dialog-content class="p-24 pb-0 m-0" fusePerfectScrollbar>
+        <span class="title dialog-title">{{pesan}}</span>
+        <div mat-dialog-actions class="m-0 p-16" fxLayout="row" fxLayoutAlign="end center">
+            <button mat-button class="save-button mat-warn" aria-label="BATAL" (click)="onDismiss()">Batal
+            </button>
+            <button mat-button class="save-button mat-accent" aria-label="SIMPAN" (click)="onConfirm()">{{tombol}}
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="dialog-content-wrapper" *ngIf="data[1]===1">
+    <mat-toolbar matDialogTitle class="mat-warn m-0">
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="start center">
+            <span class="title dialog-title">Konfirmasi</span>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <div mat-dialog-content class="p-24 pb-0 m-0" fusePerfectScrollbar>
+        <span class="title dialog-title">{{pesan}}</span>
+        <div mat-dialog-actions class="m-0 p-16" fxLayout="row" fxLayoutAlign="end center">
+            <button mat-button class="save-button mat-warn" aria-label="BATAL" (click)="onDismiss()">Batal
+            </button>
+            <button mat-button class="save-button mat-accent" aria-label="HAPUS" (click)="onConfirm()">{{tombol}}
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- 
+<h1 mat-dialog-title>
+    {{data[0]}}
+</h1>
+
+<div mat-dialog-content>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onDismiss()">No</button>
+    <button mat-raised-button color="primary" (click)="onConfirm()">Yes</button>
+</div> -->

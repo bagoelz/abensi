@@ -1,0 +1,117 @@
+<div class="dialog-content-wrapper">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="title dialog-title">Absensi {{data.tanggal}}</span>
+        </mat-toolbar-row>
+
+        <!-- class="avatar contact-avatar huge m-0" -->
+        <mat-toolbar-row class="toolbar-bottom py-16" fxLayout="column" fxLayoutAlign="center center">
+            <img src="{{imgUrl}}{{data.profile}}" class="avatar contact-avatar huge m-0">
+            <!-- <input type="file" id="imgupload" class="file_input" (change)="getFileAttachment($event)"
+                style="display:none"> -->
+            <div class="contact-name mt-8">{{data.fullname}}</div>
+            <div class="contact-name mt-8" style="font-size: 14px;">{{data.nip}}</div>
+            <div class="contact-name mt-8" style="font-size: 14px;">{{data.jabatan}}</div>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <div mat-dialog-content class="p-24 pb-0 m-0" fusePerfectScrollbar>
+        <mat-toolbar-row class="toolbar-bottom py-16" fxLayout="row" fxLayout="row" fxLayoutAlign="space-evenly center">
+            <div>
+             <img src="{{imgUrl}}absenmasuk/{{data.fotomasuk}}" class="avatar contact-avatar huge m-0">
+             <!-- <input type="file" id="imgupload" class="file_input" (change)="getFileAttachment($event)"
+                 style="display:none"> -->
+             <div class="contact-name mt-8" style="color: blue;text-align: center;">{{data.jam_masuk}}</div>
+             <div class="contact-name mt-8">Absen Masuk</div>
+             <!-- <button  matTooltip="Tolak absen masuk" mat-button class="save-button" aria-label="tolak"
+                 color="warn">
+                TOLAK
+             </button> -->
+         </div>
+         <div>
+             <img src="{{imgUrl}}absenkeluar/{{data.fotokeluar}}" class="avatar contact-avatar huge m-0">
+             <!-- <input type="file" id="imgupload" class="file_input" (change)="getFileAttachment($event)"
+                 style="display:none"> -->
+                 <div class="contact-name mt-8" style="color: blue;text-align: center;">{{data.jam_keluar}}</div>
+                 <div class="contact-name mt-8">Absen Keluar</div>
+                 <!-- <button  matTooltip="Tolak absen keluar" mat-button class="save-button" aria-label="tolak"
+                 color="warn">
+                TOLAK
+             </button> -->
+         </div>
+         </mat-toolbar-row>
+        <form [formGroup]="absensiForm">
+            <!-- <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>NIP</mat-label>
+                    <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
+                    <input name="nip" formControlName="nip" matInput required [(ngModel)]="data.nip" readonly>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Jabatan</mat-label>
+                    <mat-icon matSuffix class="secondary-text">star</mat-icon>
+                    <input name="jabatan" formControlName="jabatan" matInput [(ngModel)]="data.jabatan" readonly>
+                </mat-form-field>
+            </div> -->
+
+            <!-- <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Jam Masuk</mat-label>
+                    <mat-icon matSuffix class="secondary-text">access_time</mat-icon>
+                    <input name="JamMasuk" formControlName="JamMasuk" matInput [(ngModel)]="data.jam_masuk" readonly>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Jam Keluar</mat-label>
+                    <mat-icon matSuffix class="secondary-text">access_time</mat-icon>
+                    <input name="JamKeluar" formControlName="JamKeluar" matInput [(ngModel)]="data.jam_keluar" readonly>
+                </mat-form-field>
+            </div> -->
+
+            <div fxLayout="row" fxLayoutAlign="start start" >
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Status</mat-label>
+                    <mat-icon matSuffix class="secondary-text">info</mat-icon>
+                    <mat-select name="status" placeholder="Status" [(ngModel)]="data.status" formControlName="status"
+                        (selectionChange)="onChange($event)">
+                        <mat-option [value]="'0'"> Kosong</mat-option>
+                        <mat-option [value]="'1'"> SPT</mat-option>
+                        <mat-option [value]="'2'"> Cuti</mat-option>
+                        <mat-option [value]="'3'"> Sakit</mat-option>
+                        <mat-option [value]="'4'"> Izin </mat-option>
+                        <mat-option [value]="'5'"> Absen </mat-option>
+                        <mat-option [value]="'6'"> Ditolak </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+        </form>
+    </div>
+    <div mat-dialog-actions class=" m-0 p-16" fxLayout="row" fxLayoutAlign="end center">
+
+        <!-- <button *ngIf="action === 'edit'" mat-button class="mr-8" (click)="matDialogRef.close(['delete',contactForm])"
+            aria-label="Delete" matTooltip="Delete">
+            DELETE
+        </button>-->
+
+        <button *ngIf="auth.level == 2" mat-button class="save-button" (click)="dialogRef.close()"
+             aria-label="TUTUP">
+            TUTUP
+        </button>
+        <!-- (click)="dialogRef.close(['save',contactForm])" [disabled]="contactForm.invalid"  (click)="Cancel()"-->
+        <button *ngIf="auth.level == 1 || auth.level == 2" matTooltip="UPDATE" mat-button class="save-button" aria-label="UPDATE" color="accent"
+            [disabled]="data.status == 0" (click)="OnUpdate()">
+            UPDATE
+        </button>
+        <button *ngIf="auth.level == 1" (click)="Cancel()" matTooltip="BATALKAN" mat-button class="save-button" aria-label="BATALAKAN"
+            color="warn">
+            BATALKAN
+        </button>
+
+    </div>
+</div>

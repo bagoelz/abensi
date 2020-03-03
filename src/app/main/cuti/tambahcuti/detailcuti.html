@@ -1,0 +1,131 @@
+<!-- <div id="products" class="page-layout fullwidth inner-scroll">
+    <div class="center">
+        <mat-toolbar matDialogTitle class="mat-accent m-0">
+            <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+                <span class="title dialog-title">Daftar Cuti</span>
+                <button mat-icon-button [mat-dialog-close] aria-label="Close dialog" matTooltip="Tutup">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-toolbar-row>
+        </mat-toolbar>
+    </div>
+
+    <div class="content">
+        <mat-toolbar matDialogTitle class="m-0">
+            <mat-toolbar-row fxLayout="row" fxLayoutAlign="end start">
+                <span class="title dialog-title">Libur Dalam Bulan Ini</span>
+                <span>3</span>
+            </mat-toolbar-row>
+        </mat-toolbar>
+
+        <mat-table #table [dataSource]="dataSource" matSort [@animateStagger]="{value:'50'}" fusePerfectScrollbar>
+            <ng-container matColumnDef="no">
+                <mat-header-cell fxflex='20px' *matHeaderCellDef>#</mat-header-cell>
+                <mat-cell fxflex='20px' *matCellDef="let element">
+                    <p class="text-truncate">1</p>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="mulai">
+                <mat-header-cell *matHeaderCellDef>Mulai Cuti</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <p class="text-truncate">{{element.mulai}}</p>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="selesai">
+                <mat-header-cell *matHeaderCellDef>Selesai Cuti</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <p class="text-truncate">{{element.selesai}}</p>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="keterangan">
+                <mat-header-cell *matHeaderCellDef>Keterangan</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <p class="text-truncate">{{element.keterangan}}</p>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+            <mat-row *matRowDef="let element; columns: displayedColumns;" class="product" matRipple
+                [@animate]="{value:'*',params:{y:'100%'}}">
+            </mat-row>
+        </mat-table>
+    </div>
+</div> -->
+
+<div id="profile" class="page-layout simple fullwidth">
+    <div class="header p-24" fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-sm="row"
+        fxLayoutAlign.gt-sm="space-between end">
+
+        <div class="user-info" fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-sm="row"
+            fxLayoutAlign.gt-sm="start center">
+            <img class="profile-image avatar huge" src="{{imgUrl}}{{gambar}}"
+                [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+            <div [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                <div>
+                    <p class="name" style="margin-bottom: -5px !important;">{{fullname}}</p>
+                    <span style="color: white;">{{jabatan}} / {{capdis}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions" fxLayout="row" fxLayoutAlign="end center" [@animate]="{value:'*',params:{delay:'200ms'}}">
+            <button [mat-dialog-close] mat-raised-button color="primary" aria-label="Send Message">Tutup</button>
+        </div>
+    </div>
+    <div class="content">
+        <div id="about" class="pt-12">
+            <div class="profile-box info-box general" fxLayout="column">
+
+                <header class="accent">
+                    <div class="title">Daftar Cuti Bulan Ini</div>
+                </header>
+                <!---->
+                <mat-table #table matSort [dataSource]="dataSource" [@animateStagger]="{value:'50'}"
+                    fusePerfectScrollbar>
+
+                    <ng-container matColumnDef="no">
+                        <mat-header-cell fxflex='20px' *matHeaderCellDef>#</mat-header-cell>
+                        <mat-cell fxflex='20px' *matCellDef="let element;let i = index;">
+                            <p class="text-truncate">{{i+1}}</p>
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="mulai">
+                        <mat-header-cell *matHeaderCellDef>Mulai</mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <p class="text-truncate">{{element.mulai}}</p>
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="selesai">
+                        <mat-header-cell *matHeaderCellDef>Selesai</mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <p class="text-truncate">{{element.selesai}}</p>
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="keterangan">
+                        <mat-header-cell *matHeaderCellDef>Keterangan</mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <p class="text-truncate" *ngIf="element.keterangan==='1'">SPT</p>
+                            <p class="text-truncate" *ngIf="element.keterangan==='2'">Cuti</p>
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+                    <mat-row *matRowDef="let element; columns: displayedColumns;" class="product" matRipple
+                        [@animate]="{value:'*',params:{y:'100%'}}">
+                    </mat-row>
+
+                </mat-table>
+                <mat-paginator #paginator [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+                </mat-paginator>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+<div id="products" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- HEADER -->
+        <div class="header accent" fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-sm="row"
+            fxLayoutAlign.gt-sm="space-between center">
+
+            <!-- APP TITLE -->
+            <div class="logo mb-24 mb-md-0" fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="logo-icon s-32 mr-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    person
+                </mat-icon>
+                <span class="logo-text h1" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    Capdis
+                </span>
+            </div>
+            <!-- / APP TITLE -->
+
+            <!-- SEARCH -->
+            <div class="search-wrapper mx-32 mx-md-0">
+                <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                    <mat-icon style="color: #707070;">search</mat-icon>
+                    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Cari Data Absensi"
+                        style="color: #707070;">
+                </div>
+            </div>
+            <!-- / SEARCH -->
+
+            <!-- ADD BUTTON -->
+            <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0" (click)="openDialog()">
+                <span>Tambah Capdis</span>
+            </button>
+            <!-- / ADD BUTTON -->
+
+        </div>
+        <!-- / HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+
+            <mat-table #table [dataSource]="dataSource" matSort [@animateStagger]="{value:'50'}" fusePerfectScrollbar>
+                <!-- <ng-container matColumnDef="avatar">
+                  <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                  <mat-cell *matCellDef="let contact">
+                      <img class="avatar" src="assets/images/avatars/profile.jpg" />
+                  </mat-cell>
+              </ng-container> -->
+
+                <!-- ID Column -->
+                <!-- <ng-container matColumnDef="nama">
+                  <mat-header-cell *matHeaderCellDef>Nama Lengkap</mat-header-cell>
+                  <mat-cell *matCellDef="let element">
+                      <p class="text-truncate">{{element.user_id}}</p>
+                  </mat-cell>
+              </ng-container> -->
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="nama">
+                    <mat-header-cell *matHeaderCellDef>Nama</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <p class="text-truncate" style="white-space: unset !important;">
+                            {{element.nama}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Category Column -->
+                <ng-container matColumnDef="lat">
+                    <mat-header-cell *matHeaderCellDef>lat</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <p class="text-truncate">{{element.lat}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="lng">
+                    <mat-header-cell *matHeaderCellDef>lng</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <p class="text-truncate" style="white-space: unset !important;">
+                            {{element.lng}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+                <mat-row *matRowDef="let element; columns: displayedColumns;" class="product" matRipple
+                    [@animate]="{value:'*',params:{y:'100%'}}">
+                </mat-row>
+
+            </mat-table>
+            <!-- [length]="dataSource.filteredData.length" -->
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+
+        </div>
+        <!-- / CONTENT CARD -->
+    </div>
+    <!-- / CENTER -->
+</div>

@@ -1,0 +1,9 @@
+// Import Fuse core library
+@import "@fuse/scss/core";
+
+// Import app.theme.scss
+@import "app/app.theme";
+
+//Toastr Css
+@import '~ngx-toastr/toastr';
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";

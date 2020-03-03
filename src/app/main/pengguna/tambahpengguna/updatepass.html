@@ -1,0 +1,47 @@
+<div class="dialog-content-wrapper">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="title dialog-title">Ubah Password</span>
+            <button mat-icon-button [mat-dialog-close] aria-label="Close dialog" matTooltip="Tutup">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <div mat-dialog-content class="p-24 pb-0 m-0" fusePerfectScrollbar>
+        <form name="UpdatePassForm" [formGroup]="UpdatePassForm" class="event-form w-100-p" fxLayout="column" fxFlex>
+
+            <div fxFlex="1 0 auto" fxLayout="column" fxLayout.gt-xs="row">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Password Baru</mat-label>
+                    <input matInput type="password" placeholder="Password Baru" required [(ngModel)]="newpassword"
+                        [formControl]="passControl">
+                    <mat-error *ngIf="passControl.invalid">
+                        {{getRequiredErrorMessage('passControlGroup')}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="1 0 auto" fxLayout="column" fxLayout.gt-xs="row">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Ulangi Password</mat-label>
+                    <input matInput type="password" placeholder="Ulangi password" required
+                        [formControl]="confpassControl">
+                    <mat-error *ngIf="confpassControl.invalid">
+                        Password Tidak Sama
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div mat-dialog-actions class="m-0 p-16" fxLayout="row" fxLayoutAlign="end center">
+                <button mat-button class="save-button mat-accent" aria-label="SAVE" [disabled]="buttonDisabled"
+                    (click)="onUpdate()">Simpan
+                </button>
+                <button mat-button class="save-button mat-warn" aria-label="DELETE" (click)="dialogRef.close()">Batal
+                </button>
+                <!-- <button mat-button (click)="SaveToaster()">test</button> -->
+            </div>
+        </form>
+
+    </div>
+</div>

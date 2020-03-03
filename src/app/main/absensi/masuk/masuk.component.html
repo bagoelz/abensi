@@ -1,0 +1,163 @@
+<div id="products" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- HEADER -->
+        <div class="header accent" fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-sm="row"
+            fxLayoutAlign.gt-sm="space-between center">
+
+            <!-- APP TITLE -->
+            <div class="logo mb-24 mb-md-0" fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="logo-icon s-32 mr-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    person
+                </mat-icon>
+                <span class="logo-text h1" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    Absensi
+                </span>
+            </div>
+            <!-- / APP TITLE -->
+
+            <div class="logo mb-24 mb-md-0" fxLayout="row" fxLayoutAlign="start center" *ngIf="auth.level== 1">
+                <mat-form-field appearance="outline" class="category-selector" *ngIf="auth.level==1">
+                    <mat-label>Pilih Capdis</mat-label>
+                    <mat-select [(ngModel)]="Capdis.pilih" (selectionChange)="onChange($event.value)">
+                        <mat-option [value]="'null'">
+                            Pilih Capdis
+                        </mat-option>
+                        <mat-option *ngFor=" let item of cabang" [value]="item.id">
+                            {{item.nama}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+           
+
+       
+            <!-- ADD BUTTON -->
+            <div>
+                <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0"
+                    style="margin-right: 10px !important" (click)="openKalendar()">
+                    <mat-icon style="size: 5px;">date_range</mat-icon><span> Absen</span>
+                </button>
+                <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0">
+                    <span>Cetak Absensi</span>
+                </button>
+            </div>
+        </div>
+                 <!-- SEARCH -->
+            <div fxLayout="column" fxLayoutAlign="center center" fxLayout.gt-sm="row"
+            fxLayoutAlign.gt-sm="space-between center">
+            <div class="search-wrapper mx-32 mx-md-0" fxLayoutAlign="start center" fxLayout="row">
+                <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                    <mat-icon style="color: #707070;">search</mat-icon>
+                    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Cari Data Absensi"
+                        style="color: #707070;">
+                </div>
+            </div>
+            <!-- / SEARCH -->
+            </div>
+
+            <!-- / ADD BUTTON -->
+
+        <!-- / HEADER -->
+        <!-- CONTENT CARD -->
+        <div class="content-card">
+            <mat-table #table [dataSource]="dataSource" matSort [@animateStagger]="{value:'50'}" fusePerfectScrollbar>
+
+                <!-- Name Column -->
+                <!-- {{element.tgl_jam |  date: 'd MMMM yyyy - h:mm:ss a'}} -->
+                <ng-container matColumnDef="nip">
+                    <mat-header-cell fxFlex="22%" *matHeaderCellDef mat-sort-header>NIP</mat-header-cell>
+                    <mat-cell fxFlex="22%" *matCellDef="let element">
+                        <p class="text-truncate" style="white-space: unset !important;">
+                            {{element.nip}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Category Column -->
+                <ng-container matColumnDef="nama">
+                    <mat-header-cell fxFlex="23%" *matHeaderCellDef mat-sort-header>Nama Lengkap</mat-header-cell>
+                    <mat-cell fxFlex="23%" *matCellDef="let element" style="white-space: unset !important;">
+                        <p class="text-truncate">{{element.fullname}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="tgl">
+                    <mat-header-cell fxFlex="15%" *matHeaderCellDef mat-sort-header>Tanggal</mat-header-cell>
+                    <mat-cell fxFlex="15%" *matCellDef="let element">
+                        <p class="text-truncate" style="white-space: unset !important;">
+                            {{element.tanggal}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="jm_masuk">
+                    <mat-header-cell fxFlex="10%" *matHeaderCellDef>Jam Masuk</mat-header-cell>
+                    <mat-cell fxFlex="10%" *matCellDef="let element">
+                        <p class="text-truncate" *ngIf="element.status === '2' || element.status === '1'">-</p>
+                        <p class="text-truncate" *ngIf="element.status === '0'">{{element.jam_masuk}}</p>
+
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="jm_keluar">
+                    <mat-header-cell fxFlex="10%" *matHeaderCellDef>Jam Keluar</mat-header-cell>
+                    <mat-cell fxFlex="10%" *matCellDef="let element">
+                        <p class="text-truncate"
+                            *ngIf="element.status === '2' || element.status === '1' || element.jam_keluar === null">-
+                        </p>
+                        <p class="text-truncate" *ngIf="element.status === '0'">{{element.jam_keluar}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                    <mat-header-cell fxFlex="10%" *matHeaderCellDef>Status</mat-header-cell>
+                    <mat-cell fxFlex="10%" *matCellDef="let element">
+                        <p class="text-truncate" *ngIf="element.status === '0' &&  element.jam_keluar !== null">Hadir
+                        </p>
+                        <p class="text-truncate" *ngIf="element.status === '0' &&  element.jam_keluar === null">Kosong
+                        </p>
+
+                        <!-- <p class="text-truncate" *ngIf="element.status === '0'">Hadir</p> -->
+                        <p class="text-truncate" *ngIf="element.status === '1'">SPT</p>
+                        <p class="text-truncate" *ngIf="element.status === '2'">Cuti</p>
+                        <p class="text-truncate" *ngIf="element.status === '3'">Sakit</p>
+                        <p class="text-truncate" *ngIf="element.status === '4'">Izin</p>
+                        <p class="text-truncate" *ngIf="element.status === '5'">Absen</p>
+                        <p class="text-truncate" *ngIf="element.status === '6'">Ditolak</p>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="keterangan">
+                    <mat-header-cell fxFlex="10%" *matHeaderCellDef>Keterangan</mat-header-cell>
+                    <mat-cell fxFlex="10%" *matCellDef="let element">
+                        <p class="text-truncate" *ngIf="element.keterangan === '' &&  element.jam_keluar !== null">-
+                        </p>
+                        <p class="text-truncate" *ngIf="element.keterangan === '' &&  element.jam_keluar === null">
+                            -
+                        </p>
+                        <p class="text-truncate" *ngIf="element.keterangan === '1'">Spt</p>
+                        <p class="text-truncate" *ngIf="element.keterangan === '2'">Cuti</p>
+                    </mat-cell>
+                </ng-container>
+
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+                <mat-row (click)="DetailAbsensi(element)" *matRowDef="let element; columns: displayedColumns;"
+                    class="product" matRipple [@animate]="{value:'*',params:{y:'100%'}}">
+                </mat-row>
+
+            </mat-table>
+            <!-- [length]="dataSource.filteredData.length" -->
+            <mat-paginator #paginator [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
+            </mat-paginator>
+
+        </div>
+        <!-- / CONTENT CARD -->
+    </div>
+    <!-- / CENTER -->
+</div>

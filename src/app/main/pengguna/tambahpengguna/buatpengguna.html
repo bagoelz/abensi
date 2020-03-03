@@ -1,0 +1,200 @@
+<div class="dialog-content-wrapper">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="title dialog-title">{{title}}</span>
+            <button mat-icon-button [mat-dialog-close] aria-label="Close dialog" matTooltip="Tutup">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+
+
+        <mat-toolbar-row class="toolbar-bottom py-16" fxLayout="column" fxLayoutAlign="center center">
+            <img [src]="gambar || 'assets/images/avatars/profile.jpg'" class="avatar contact-avatar huge m-0"
+                matTooltip="Unggah Gambar" (click)="openfile()">
+            <input type="file" id="imgupload" class="file_input" (change)="getFileAttachment($event)"
+                style="display:none">
+            <div class="contact-name mt-8"></div>
+        </mat-toolbar-row>
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="end start" *ngIf="flag && data.status === '0'">
+            <mat-chip-list [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}" style="padding-bottom: 0px;">
+                <mat-chip *ngIf="auth.level == 1" (click)="approve()">Approve</mat-chip>
+                <mat-chip *ngIf="auth.level == 2" (click)="PassUpdate(data)">Ubah Password</mat-chip>
+            </mat-chip-list>
+        </mat-toolbar-row>
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="end start" *ngIf=" flag && data.status === '1'">
+            <mat-chip-list [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}" style="padding-bottom: 0px;">
+                <mat-chip *ngIf="auth.level == 2 || auth.level == 1 " (click)="PassUpdate(data)">Ubah Password</mat-chip>
+            </mat-chip-list>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <div mat-dialog-content class="p-24 pb-0 m-0" fusePerfectScrollbar>
+        <form name="penggunaForm" [formGroup]="penggunaForm" class="mb-24">
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start end">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>username</mat-label>
+                    <input matInput placeholder="Username" required [(ngModel)]="ModelPengguna.username"
+                        [formControl]="usernameControl">
+                    <mat-error *ngIf="usernameControl.invalid">
+                        {{getRequiredErrorMessage('usernameControlGroup')}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start" *ngIf="!flag">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Password</mat-label>
+                    <input matInput type="password" placeholder="Password" required [(ngModel)]="ModelPengguna.password"
+                        [formControl]="passControl">
+                    <mat-error *ngIf="passControl.invalid">
+                        {{getRequiredErrorMessage('passControlGroup')}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start" *ngIf="!flag">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Ulangi Password</mat-label>
+                    <input matInput type="password" placeholder="Ulangi password" required
+                        [formControl]="confpassControl">
+                    <mat-error *ngIf="confpassControl.invalid">
+                        Password Tidak Sama
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>NIP</mat-label>
+                    <input matInput placeholder="NIP" required [(ngModel)]="ModelPengguna.nip"
+                        [formControl]="nipFormControl">
+                    <mat-error *ngIf="nipFormControl.invalid">
+                        {{getRequiredErrorMessage('nipGroup')}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Nama Lengkap</mat-label>
+                    <input matInput placeholder="Nama Lengkap" required [(ngModel)]="ModelPengguna.nama_lengkap"
+                        [formControl]="namalengkapFormControl">
+                    <mat-error *ngIf="namalengkapFormControl.invalid">
+                        {{getRequiredErrorMessage('namalengkapGroup')}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex class="category-selector">
+                    <mat-label>Jabatan</mat-label>
+                    <mat-select placeholder="Jabatan" [(ngModel)]="ModelPengguna.jabatan" [disabled]="flag && auth.level == 2" [formControl]="jbtnControl">
+                        <mat-option [value]="item.id" *ngFor="let item of jabatan; let i = index" >
+                            {{item.jabatan}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="jbtnControl.invalid">
+                        {{getRequiredErrorMessage('jbtnControlGroup')}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Jenis Kelamin</mat-label>
+                    <mat-select placeholder="Jenis Kelamin" [(ngModel)]="ModelPengguna.gender"
+                        [formControl]="jkControl">
+                        <mat-option [value]="'1'"> Laki-laki </mat-option>
+                        <mat-option [value]="'2'"> Perempuan </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="jkControl.invalid">
+                        {{getRequiredErrorMessage('jkControlGroup')}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>No. HP</mat-label>
+                    <input matInput placeholder="No. HP" required [(ngModel)]="ModelPengguna.hp"
+                        [formControl]="hpControl">
+                    <mat-error *ngIf="hpControl.invalid">
+                        {{getRequiredErrorMessage('hpControlGroup')}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Capdis</mat-label>
+                    <mat-select placeholder="Capdis" [(ngModel)]="ModelPengguna.capdis" [formControl]="cpControl"
+                        style="width: 400px;">
+                        <mat-option [value]="item.id" *ngFor="let item of cabang; let i = index">{{item.nama}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="cpControl.invalid">
+                        {{getRequiredErrorMessage('cpControlGroup')}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+
+
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex *ngIf="data !== null">
+                    <mat-label>Otoritas</mat-label>
+                    <mat-select placeholder="Otoritas" *ngIf="auth.level == 1" [(ngModel)]="ModelPengguna.level" [formControl]="lvlControl"
+                        [disabled]="editable">
+                        <mat-option [value]="'1'"> Super Admin</mat-option>
+                        <mat-option [value]="'2'"> Admin </mat-option>
+                        <mat-option [value]="'3'"> User </mat-option>
+                    </mat-select>
+                    <mat-select placeholder="Otoritas" *ngIf="auth.level == 2" [(ngModel)]="ModelPengguna.level" [formControl]="lvlControl"
+                        [disabled]="editable">
+                        <mat-option [value]="'3'"> User </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="lvlControl.invalid">
+                        {{getRequiredErrorMessage('lvlControlGroup')}}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" fxFlex *ngIf="data === null">
+                    <mat-label>Otoritas</mat-label>
+                    <mat-select placeholder="Otoritas" *ngIf="auth.level == 1" [(ngModel)]="ModelPengguna.level" [formControl]="lvlControl"
+                    [disabled]="editable">
+                    <mat-option [value]="'1'"> Super Admin</mat-option>
+                    <mat-option [value]="'2'"> Admin </mat-option>
+                    <mat-option [value]="'3'"> User </mat-option>
+                </mat-select>
+                <mat-select placeholder="Otoritas" *ngIf="auth.level == 2" [(ngModel)]="ModelPengguna.level" [formControl]="lvlControl"
+                    [disabled]="editable">
+                    <mat-option [value]="'3'"> User </mat-option>
+                </mat-select>
+                    <mat-error *ngIf="lvlControl.invalid">
+                        {{getRequiredErrorMessage('lvlControlGroup')}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+
+
+
+            <!-- (click)="showToaster() -->
+            <!-- [disabled]="penggunaForm.invalid"  [disabled]="penggunaForm.invalid"-->
+            <div mat-dialog-actions class="m-0 p-16" fxLayout="row" fxLayoutAlign="end center">
+                <button mat-button class="save-button mat-accent" aria-label="SAVE" (click)="onUpdate()"
+                    *ngIf="flag">Ubah
+                </button>
+                <button mat-button class="save-button mat-warn" aria-label="DELETE" *ngIf="flag"
+                    (click)="onDelete()">Hapus
+                </button>
+                <button mat-button class="save-button mat-accent" aria-label="SAVE" *ngIf="!flag"
+                    [disabled]="penggunaForm.invalid" (click)="onClick()">Simpan
+                </button>
+
+                <!-- <button mat-button (click)="SaveToaster()">test</button> -->
+            </div>
+        </form>
+    </div>
+</div>
