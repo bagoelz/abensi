@@ -11,8 +11,8 @@
 export const environment = {
     production: false,
     hmr: false,
-    BaseUrl: 'https://it-mudah.com/apiabsensi/',
-    ImageUrl: 'https://it-mudah.com/apiabsensi/uploads/',
+    BaseUrl: 'https://it-mudah.com/backabsensi/',
+    ImageUrl: 'https://it-mudah.com/backabsensi/uploads/',
 };
 
 /*
