@@ -368,10 +368,6 @@ auth
       headers: headers
     };
 
-    // return this.http.get(this.BaseURL + 'capdis/ambilCapdis', pilih).pipe(map(response => {
-    //   return response;
-    // }));
-
     return this.http.get(this.BaseURL + 'capdis/ambilCapdis',pilih).pipe(map(response => {
       return response;
     }));

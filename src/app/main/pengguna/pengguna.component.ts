@@ -13,7 +13,6 @@ import { MatTableDataSource, MatDialog, ErrorStateMatcher, MatDialogRef, MAT_DIA
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ApiService } from 'app/services/api.service';
 import { FormControl, FormGroupDirective, NgForm, FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/forms';
-// import { ToastrComponent } from 'app/main/toastr/toastr.component';
 import { environment } from '../../../environments/environment';
 
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';

@@ -22,6 +22,7 @@ import { locale as english } from './i18n/en';
 import { locale as turkish } from './i18n/tr';
 import { environment } from 'environments/environment';
 import { tmpdir } from 'os';
+import * as moment from 'moment';
 
 @Component({
   selector: 'absensimasuk',
@@ -38,6 +39,8 @@ export class MasukComponent implements OnInit {
   token: string;
   Capdis:any=[];
   cabang:any=[];
+  DateNow:any;
+  DateNow2:any;
   /**
     * Constructor
     *
@@ -72,7 +75,9 @@ export class MasukComponent implements OnInit {
     }
   }
   ngOnInit() {
-
+    this.DateNow = new Date();
+    this.DateNow2 = moment(new Date()).format('DD MMMM YYYY').toString();
+    console.log(this.DateNow);
     this.initUser();
   }
   async initUser() {
@@ -95,22 +100,32 @@ export class MasukComponent implements OnInit {
             });
         });
     });
-}
+  }
+
   getData() {
     this.API.getAbsensiMasuk(this.token).subscribe(result => {
       if(this,this.auth.level==2){
         result['Output'].forEach(item => {
-          if(item.capdis === this.auth.idCapdis){
+          if(item.capdis === this.auth.idCapdis && item.tanggal === this.DateNow2){
             this.ListAbsen.push(item);
           }
         });
       }else{
-        this.ListAbsen =result['Output'];
+        // result['Output'].forEach(item => {
+        //   if(item.tanggal === this.DateNow2){
+        //     this.ListAbsen.push(item);
+        //   }
+        // });
+        this.ListAbsen = result['Output'];
       }
       this.dataSource = new MatTableDataSource(this.ListAbsen);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
+  }
+
+  FilterDate(e){
+    console.log(e);
   }
   openKalendar(){
     this.router.navigate(['/cuti']);
@@ -130,7 +145,7 @@ export class MasukComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
-}
+  }
 
   DetailAbsensi(e) {
     // console.log(e);

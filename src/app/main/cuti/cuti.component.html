@@ -22,13 +22,27 @@
             </div>
             <!-- / APP TITLE -->
 
+            <div class="logo mb-24 mb-md-0" fxLayout="row" fxLayoutAlign="start center" *ngIf="auth.level== 1">
+                <mat-form-field appearance="outline" class="category-selector" *ngIf="auth.level==1">
+                    <mat-label>Pilih Capdis</mat-label>
+                    <mat-select [(ngModel)]="Capdis.pilih" (selectionChange)="onChange2($event.value)">
+                        <mat-option [value]="'null'">
+                            Pilih Capdis
+                        </mat-option>
+                        <mat-option *ngFor=" let item of cabang" [value]="item.id">
+                            {{item.nama}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            
             <!-- SEARCH -->
-            <div class="search-wrapper mx-32 mx-md-0">
+            <!-- <div class="search-wrapper mx-32 mx-md-0">
                 <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
                     <mat-icon style="color: #707070;">search</mat-icon>
                     <input (keyup)="applyFilter($event.target.value)" placeholder="Cari Data" style="color: #707070;">
                 </div>
-            </div>
+            </div> -->
             <!-- / SEARCH -->
 
             <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0" (click)="tmbhCuti()">
@@ -48,7 +62,16 @@
         </div> -->
         <!-- [(ngModel)]="Kota" (selectionChange)="onChange($event.value)" -->
         <div class="content-card">
-            <div class="pl-24 pr-24 pt-18 pb-10 mb-8 border-bottom" fxLayout="row" fxLayoutAlign="end start">
+            <div class="pl-24 pr-24 pt-18 pb-10 mb-8 border-bottom" fxLayout="row" fxLayoutAlign="space-between start">
+                <!-- SEARCH -->
+                <div class="search-wrapper mx-32 mx-md-0" style="margin-top:34px !important">
+                    <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                        <mat-icon style="color: #707070;">search</mat-icon>
+                        <input (keyup)="applyFilter($event.target.value)" placeholder="Cari Data" style="color: #707070;">
+                    </div>
+                </div>
+            <!-- / SEARCH -->
+
                 <div class="logo " fxLayout="row" fxLayoutAlign="start center">
                     <mat-form-field appearance="outline" class="category-selector" style="margin-top: 15px;">
                         <mat-label>Tampilkan Berdasarkan Bulan</mat-label>

@@ -13,9 +13,18 @@ import { MatTableDataSource, MatDialog, ErrorStateMatcher, MatDialogRef, MAT_DIA
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ApiService } from 'app/services/api.service';
 import { FormControl, FormGroupDirective, NgForm, FormGroup, Validators, FormBuilder, AbstractControl, FormArray } from '@angular/forms';
-// import { ToastrComponent } from 'app/main/toastr/toastr.component';
+import { ToastrService } from 'ngx-toastr';
 import { environment } from '../../../environments/environment';
-
+import {
+  startOfDay,
+  endOfDay,
+  subDays,
+  addDays,
+  endOfMonth,
+  isSameDay,
+  isSameMonth,
+  addHours
+} from 'date-fns';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 
@@ -41,6 +50,12 @@ export class CutiComponent implements OnInit {
   listMonth: any = [];
   bulan: any;
   date: any = [];
+  token: string;
+  auth:any=[];
+  cabang:any=[];
+  Capdis:any=[];
+  newArray:any=[];
+  ListAbsen:any=[];
   monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   /**
   * Constructor
@@ -75,24 +90,53 @@ export class CutiComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.token= JSON.parse(localStorage.getItem('TOKEN'));
+    this.auth = JSON.parse(localStorage.getItem('AUTH'));
+    console.log(this.token);
     this.date = moment().months();
     this.bulan = this.monthNames[this.date];
     // console.log(this.bulan);
     this.load(this.bulan);
     this.listMonth = moment.months();
+    this.getCapdis();
+  }
+
+  
+  getCapdis() {
+    this.API.getCapdis(this.token).subscribe(result => {
+        result['Output'].forEach((item) => {
+            this.cabang.push({
+                'id': item.id_capdis,
+                'nama': item.nama,
+            });
+            console.log(this.cabang);
+        });
+    });
+  }
+
+  onChange2(e) {
+    this.ListAbsen = [];
+    if (e === 'null') {
+      this.dataSource = new MatTableDataSource(this.newArray);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    } else {
+      this.ListAbsen =  this.newArray.filter(s => s.id_capdis === e.toString());
+      this.dataSource = new MatTableDataSource(this.ListAbsen);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
   }
 
   load(el) {
-    let newArray = [];
+    this.newArray = [];
     let uniqueObject = {};
     this.API.getCuti().subscribe(result => {
       this.ListCuti = result['Output'];
       this.TmpCuti = this.ListCuti.filter(e => {
         var a = e.mulai.split(' ');
-        // console.log(a[1]);
         return a[1] === el;
       });
-      // console.log(this.TmpCuti);
 
       let i = 0;
       this.TmpCuti.forEach(item => {
@@ -103,12 +147,10 @@ export class CutiComponent implements OnInit {
 
 
       for (const j in uniqueObject) {
-        newArray.push(uniqueObject[j]);
+        this.newArray.push(uniqueObject[j]);
       }
-      // console.log(newArray);
 
-      // this.dataSource = new MatTableDataSource(this.TmpCuti);
-      this.dataSource = new MatTableDataSource(newArray);
+      this.dataSource = new MatTableDataSource(this.newArray);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
@@ -207,8 +249,6 @@ export class DetailCuti {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
-
-
 }
 
 @Component({
@@ -251,6 +291,7 @@ export class dialogCuti {
   */
 
   constructor(
+    private toastr: ToastrService,
     http: HttpClient,
     private API: ApiService,
     public _MatDialog: MatDialog,
@@ -394,7 +435,6 @@ export class dialogCuti {
   // }
 
   async simpan() {
-
     let uid = this.uid;
     let mulai = this.tglmulai.valueOf() / 1000;
     let akhir = this.tglakhir.valueOf() / 1000;
@@ -406,20 +446,21 @@ export class dialogCuti {
       return;
     }
     if (mulai > akhir) {
-      alert('Tanggal mulai cuti tidak boleh lebih besar tanggal masuk cuti');
+      this.toastr.warning("Tanggal mulai tidak boleh lebih besar tanggal akhir", "Informasi");
       return;
     }
-    
-      this.API.addCuti(uid, mulai, akhir, ket, this.file, this.capdis.toString()).subscribe(result => {
-        const status = result['status'];
-        const desc = result['desc'];
 
-        if (status === 'OK') {
-          this.ModelCuti = [];
-          alert('Status OK');
-          this.dialogRef.close();
-        }
-      });
+    this.API.addCuti(uid, mulai, akhir, ket, this.file, this.capdis.toString()).subscribe(result => {
+      const status = result['status'];
+      const desc = result['desc'];
+
+      if (status === 'OK') {
+        this.ModelCuti = [];
+        this.toastr.success("Data berhasil disimpan", "Informasi");
+        this.dialogRef.close();
+      }
+    });
+
     
   }
 }

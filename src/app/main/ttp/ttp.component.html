@@ -44,8 +44,8 @@
 
         </div>
         <!-- / HEADER -->
-        <div class="search-wrapper mx-32 mx-md-0">
-            <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+        <div class="search-wrapper mx-32 mx-md-0" fxLayoutAlign="start center" fxLayout="row">
+            <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center" style="height: 50px !important;">
                 <mat-icon style="color: #707070;">search</mat-icon>
                 <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Cari Data TTP"
                     style="color: #707070;">
