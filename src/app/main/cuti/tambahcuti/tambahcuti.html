@@ -72,7 +72,7 @@
             <div fxLayout="row" fxLayoutAlign="start start">
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Tanggal Mulai</mat-label>
-                    <input name="mulai" formControlName="mulai" matInput [(ngModel)]="ModelCuti.mulai"
+                    <input name="mulai" formControlName="mulai" matInput [(ngModel)]="ModelCuti.mulai" [min]="minDate"
                         (ngModelChange)="onDataChange($event)" [matDatepicker]="dp3" required readonly>
                     <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
                     <mat-datepicker #dp3 disabled="false"></mat-datepicker>
@@ -83,7 +83,7 @@
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Tanggal Akhir</mat-label>
                     <!-- <mat-icon matSuffix class="secondary-text">access_time</mat-icon> -->
-                    <input name="akhir" formControlName="akhir" matInput [(ngModel)]="ModelCuti.akhir" readonly
+                    <input name="akhir" formControlName="akhir" matInput [(ngModel)]="ModelCuti.akhir" readonly [min]="minDate"
                         (ngModelChange)="onDataChange2($event)" [matDatepicker]="dp4" required readonly>
                     <mat-datepicker-toggle matSuffix [for]="dp4"></mat-datepicker-toggle>
                     <mat-datepicker #dp4 disabled="false"></mat-datepicker>

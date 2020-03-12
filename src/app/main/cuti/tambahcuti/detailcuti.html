@@ -117,8 +117,18 @@
                             <p class="text-truncate" *ngIf="element.keterangan==='2'">Cuti</p>
                         </mat-cell>
                     </ng-container>
+                    <ng-container  matColumnDef="lampiran">
+                        <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <mat-icon *ngIf="element.file !=='undefined'" class="logo-icon s-32 mr-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.1'}}">
+                                attach_file
+                            </mat-icon>
+                            <!-- <p class="text-truncate">{{element.file}}</p> -->
+                        </mat-cell>
+                    </ng-container>
+
                     <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-                    <mat-row *matRowDef="let element; columns: displayedColumns;" class="product" matRipple
+                    <mat-row (click)="seePreview(element)" *matRowDef="let element; columns: displayedColumns;" class="product" matRipple
                         [@animate]="{value:'*',params:{y:'100%'}}">
                     </mat-row>
 

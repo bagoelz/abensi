@@ -92,7 +92,6 @@ export class CutiComponent implements OnInit {
   ngOnInit() {
     this.token= JSON.parse(localStorage.getItem('TOKEN'));
     this.auth = JSON.parse(localStorage.getItem('AUTH'));
-    console.log(this.token);
     this.date = moment().months();
     this.bulan = this.monthNames[this.date];
     // console.log(this.bulan);
@@ -109,7 +108,6 @@ export class CutiComponent implements OnInit {
                 'id': item.id_capdis,
                 'nama': item.nama,
             });
-            console.log(this.cabang);
         });
     });
   }
@@ -169,7 +167,9 @@ export class CutiComponent implements OnInit {
     });
 
     this.dialogRef.afterClosed().subscribe(result => {
-
+      if(result.event == 'update'){
+        this.load(this.bulan);
+      }
     });
   }
 
@@ -195,7 +195,7 @@ export class CutiComponent implements OnInit {
   encapsulation: ViewEncapsulation.None
 })
 export class DetailCuti {
-  displayedColumns = ['no', 'mulai', 'selesai', 'keterangan'];
+  displayedColumns = ['no', 'mulai', 'selesai', 'keterangan','lampiran'];
   dataSource: MatTableDataSource<any>;
   imgUrl = environment.ImageUrl;
 
@@ -239,8 +239,6 @@ export class DetailCuti {
     this.lib = this.data.lib;
     this.bulan = this.data.bulan;
     this.FinalData = this.lib.filter(item => item.user_id === this.UserData.user_id);
-    console.log(this.FinalData);
-    console.log(this.lib);
     this.gambar = this.FinalData[0].user_picture;
     this.fullname = this.FinalData[0].fullname;
     this.jabatan = this.FinalData[0].jabatan;
@@ -248,6 +246,10 @@ export class DetailCuti {
     this.dataSource = new MatTableDataSource(this.FinalData);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+
+  seePreview(item){
+   window.open(environment.ImageUrl+'/spt/'+item.file,'_blank');
   }
 }
 
@@ -269,7 +271,7 @@ export class dialogCuti {
   tglmulai: Date;
   tglakhir: Date;
   uid: any;
-
+  minDate:Date;
   value2: any;
 
   filename: string = null;
@@ -304,7 +306,8 @@ export class dialogCuti {
   }
 
   ngOnInit(): void {
-
+    var minCurrentDate = new Date();
+    this.minDate = minCurrentDate;
     // jabatan: "Kepala Seksi / KTU Gol. IV"
     // capdis: "Tes Rumah"
     this.cutiForm = new FormGroup({
@@ -383,17 +386,18 @@ export class dialogCuti {
 
   fileChange(event) {
     this.fileList = event.target.files;
-    console.log(event.target.files[0].size)
       this.file = this.fileList[0];
-      this.filename = this.file.name;
-      // console.log(this.filename);
-      // console.log(this.file);
-      this.files.push(this.file.name);
-      // console.log(this.files);
       var mimeType = this.file.type;
-      if (mimeType.match(/image\/*/) == null) {
+      if (mimeType.match(/pdf\/*/) == null) {
+        this.toastr.error('Fila harus berupa PDF','informasi')
         return;
       }
+      // console.log(this.filename);
+      // console.log(this.file);
+      this.filename = this.file.name;
+      this.files.push(this.file.name);
+      // console.log(this.files);
+     
       var reader = new FileReader();
       reader.readAsDataURL(this.file);
       reader.onload = (_event) => {
@@ -439,8 +443,6 @@ export class dialogCuti {
     let mulai = this.tglmulai.valueOf() / 1000;
     let akhir = this.tglakhir.valueOf() / 1000;
     let ket = this.ModelCuti.ket;
-  console.log(this.file);
-  console.log(ket);
     if(this.file === null){
       alert('attachment harus di isi/dilampirkan');
       return;
@@ -457,7 +459,10 @@ export class dialogCuti {
       if (status === 'OK') {
         this.ModelCuti = [];
         this.toastr.success("Data berhasil disimpan", "Informasi");
-        this.dialogRef.close();
+        this.dialogRef.close({event:'update'});
+      }else{
+        this.toastr.error("Data gagal disimpan", "Informasi");
+        this.dialogRef.close({event:'cancel'});
       }
     });
 
