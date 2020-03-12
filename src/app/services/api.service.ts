@@ -341,7 +341,7 @@ export class ApiService {
       return response;
     }));
   }
-auth
+
   getAbsensiKeluar() {
     // let headers = new HttpHeaders({
     //   'Content-Type': 'application/json',
@@ -534,6 +534,23 @@ auth
     }));
   }
 
+  getValidate(uid: string, mulai: any, akhir: any,): Observable<any> {
+    const formData: FormData = new FormData();
+    let options = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    formData.append('p_uid', uid);
+    formData.append('p_mulai', mulai);
+    formData.append('p_akhir', akhir);
+
+    return this.http.post(this.BaseURL + 'pengguna2/validateCuti/', formData)
+      .pipe(map(response => {
+        return response;
+      }));
+  }
 
   addCuti(uid: string, mulai: any, akhir: any, ket: string, file: any, capdis:string): Observable<any> {
     const formData: FormData = new FormData();

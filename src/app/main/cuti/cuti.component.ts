@@ -94,7 +94,6 @@ export class CutiComponent implements OnInit {
     this.auth = JSON.parse(localStorage.getItem('AUTH'));
     this.date = moment().months();
     this.bulan = this.monthNames[this.date];
-    // console.log(this.bulan);
     this.load(this.bulan);
     this.listMonth = moment.months();
     this.getCapdis();
@@ -143,7 +142,6 @@ export class CutiComponent implements OnInit {
         i++;
       });
 
-
       for (const j in uniqueObject) {
         this.newArray.push(uniqueObject[j]);
       }
@@ -164,6 +162,9 @@ export class CutiComponent implements OnInit {
       panelClass: 'dialog',
       width: '500px',
       hasBackdrop: true,
+      data:{
+        lib : this.TmpCuti,
+      }
     });
 
     this.dialogRef.afterClosed().subscribe(result => {
@@ -281,7 +282,8 @@ export class dialogCuti {
   files: any = [];
   previewUrl: any = null;
   capdis:String;
-
+  libCuti:any = [];
+  tmpFilterNip:any = [];
   // fileData: File = null;
   // previewUrl:any = null;
   // fileUploadProgress: string = null;
@@ -306,10 +308,9 @@ export class dialogCuti {
   }
 
   ngOnInit(): void {
+    this.libCuti = this.data.lib;
     var minCurrentDate = new Date();
     this.minDate = minCurrentDate;
-    // jabatan: "Kepala Seksi / KTU Gol. IV"
-    // capdis: "Tes Rumah"
     this.cutiForm = new FormGroup({
       nip: new FormControl(''),
       fullname: new FormControl(''),
@@ -332,12 +333,18 @@ export class dialogCuti {
     const _ = moment();
     const tmp = moment(newdate).add({ hours: _.hour(), minutes: _.minute(), seconds: _.second() });
     this.tglmulai = tmp.toDate();
+    if(this.ModelCuti.mulai !== undefined && this.ModelCuti.akhir !== undefined && this.ModelCuti.nip !== undefined){
+      this.Validate();
+    }
   }
 
   onDataChange2(newdate) {
     const _ = moment();
     const tmp = moment(newdate).add({ hours: _.hour(), minutes: _.minute(), seconds: _.second() });
     this.tglakhir = tmp.toDate();
+    if(this.ModelCuti.mulai !== undefined && this.ModelCuti.akhir !== undefined && this.ModelCuti.nip !== undefined){
+      this.Validate();
+    }
   }
 
   // get eventFields()
@@ -432,11 +439,20 @@ export class dialogCuti {
     });
   }
 
-  // async PreviewImage() {
-  //   await this.OpenAfterUpload();
-  //   console.log(this.previewUrl);
+  async Validate() {
+    let uid = this.uid;
+    let mulai = this.tglmulai.valueOf() / 1000;
+    let akhir = this.tglakhir.valueOf() / 1000;
+    console.log(uid, mulai, akhir);
 
-  // }
+    this.API.getValidate(uid, mulai, akhir).subscribe(result=>{
+      const status = result['status'];
+      console.log(result);
+      if(!status){
+        this.toastr.warning(result['message'], "Cek tanggal SPT");
+      }
+    });
+  }
 
   async simpan() {
     let uid = this.uid;
@@ -465,8 +481,6 @@ export class dialogCuti {
         this.dialogRef.close({event:'cancel'});
       }
     });
-
-    
   }
 }
 

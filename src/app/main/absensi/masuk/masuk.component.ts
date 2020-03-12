@@ -9,7 +9,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseUtils } from '@fuse/utils';
 
 import { takeUntil } from 'rxjs/internal/operators';
-import { MatTableDataSource, MatDialog, ErrorStateMatcher, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatTableDataSource, MatDialog, ErrorStateMatcher, MatDialogRef, MAT_DIALOG_DATA, MatDatepickerInputEvent } from '@angular/material';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ApiService } from 'app/services/api.service';
 import { FormControl, FormGroupDirective, NgForm, FormGroup, Validators, FormBuilder, AbstractControl } from '@angular/forms';
@@ -36,11 +36,13 @@ export class MasukComponent implements OnInit {
   displayedColumns = ['nip', 'nama', 'tgl', 'jm_masuk', 'jm_keluar', 'status', 'keterangan'];
   auth: any = [];
   ListAbsen:any=[];
+  fullAbsen:any = [];
   token: string;
   Capdis:any=[];
   cabang:any=[];
   DateNow:any;
   DateNow2:any;
+  dateFilter:any = [];
   /**
     * Constructor
     *
@@ -52,9 +54,6 @@ export class MasukComponent implements OnInit {
 
   @ViewChild(MatSort, { static: true })
   sort: MatSort;
-
-
-
 
   constructor(
     http: HttpClient,
@@ -77,7 +76,7 @@ export class MasukComponent implements OnInit {
   ngOnInit() {
     this.DateNow = new Date();
     this.DateNow2 = moment(new Date()).format('DD MMMM YYYY').toString();
-    console.log(this.DateNow);
+    console.log(this.Capdis.pilih)
     this.initUser();
   }
   async initUser() {
@@ -103,20 +102,24 @@ export class MasukComponent implements OnInit {
   }
 
   getData() {
+    this.ListAbsen, this.fullAbsen = [];
     this.API.getAbsensiMasuk(this.token).subscribe(result => {
-      if(this,this.auth.level==2){
-        result['Output'].forEach(item => {
+      this.fullAbsen = result['Output'];
+      // console.log(this.fullAbsen);
+      if(this,this.auth.level===2){
+       this.fullAbsen.forEach(item => {
           if(item.capdis === this.auth.idCapdis && item.tanggal === this.DateNow2){
             this.ListAbsen.push(item);
           }
         });
       }else{
-        // result['Output'].forEach(item => {
-        //   if(item.tanggal === this.DateNow2){
-        //     this.ListAbsen.push(item);
-        //   }
-        // });
-        this.ListAbsen = result['Output'];
+       this.fullAbsen.forEach(item => {
+          if(item.tanggal === this.DateNow2){
+            this.ListAbsen.push(item);
+          }
+        });
+        // this.ListAbsen = result['Output'];
+        // console.log(this.ListAbsen);
       }
       this.dataSource = new MatTableDataSource(this.ListAbsen);
       this.dataSource.paginator = this.paginator;
@@ -124,23 +127,73 @@ export class MasukComponent implements OnInit {
     });
   }
 
-  FilterDate(e){
-    console.log(e);
-  }
   openKalendar(){
     this.router.navigate(['/cuti']);
   }
 
+  onDateSelected(newdate){
+    const _ = moment();
+    const tmp = moment(newdate).add({ hours: _.hour(), minutes: _.minute(), seconds: _.second() });
+    let tmpselected =  moment(tmp.toDate()).format('DD MMMM YYYY').toString(); ;
+    // console.log(tmpselected);
+    this.ListAbsen = [];
+    if(this,this.auth.level===2){
+      this.fullAbsen.forEach(item => {
+         if(item.capdis === this.auth.idCapdis && item.tanggal === tmpselected){
+           this.ListAbsen.push(item);
+         }
+       });
+     }else{
+      if(this.Capdis.pilih === undefined || this.Capdis.pilih === 'null'){
+        this.fullAbsen.forEach(item => {
+          if(item.tanggal === tmpselected){
+            this.ListAbsen.push(item);
+          }
+        });
+      }else{
+        this.fullAbsen.forEach(item => {
+          if(item.tanggal === tmpselected && item.capdis === this.Capdis.pilih){
+            this.ListAbsen.push(item);
+          }
+        });
+      }
+
+       // this.ListAbsen = result['Output'];
+      //  console.log(this.ListAbsen);
+     }
+     this.dataSource = new MatTableDataSource(this.ListAbsen);
+     this.dataSource.paginator = this.paginator;
+     this.dataSource.sort = this.sort;
+    // setTimeout(() => {
+    //   this.getData();
+    // }, 500);
+    // let tmp = moment(e).format('DD MMMM YYYY').toString();
+    // console.log(tmp);
+    // this.ListAbsen =  this.fullAbsen.filter(s => s.tanggal === tmp);
+    // this.dataSource = new MatTableDataSource(this.ListAbsen);
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
+  }
+
   onChange(e) {
+    console.log(e);
+    this.ListAbsen = [];
+    const _ = moment();
+    const tmp = moment(this.DateNow).add({ hours: _.hour(), minutes: _.minute(), seconds: _.second() });
+    let tmpselected =  moment(tmp.toDate()).format('DD MMMM YYYY').toString(); ;
     if (e === 'null') {
         setTimeout(() => {
-            this.getData();
+          this.fullAbsen.forEach(item => {
+            if(item.tanggal === tmpselected){
+              this.ListAbsen.push(item);
+            }
+          });
             this.dataSource = new MatTableDataSource(this.ListAbsen);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
         }, 500);
     } else {
-      this.ListAbsen =  this.ListAbsen.filter(s => s.capdis === e.toString());
+      this.ListAbsen =  this.fullAbsen.filter(s => s.capdis === e.toString() && s.tanggal === tmpselected);
       this.dataSource = new MatTableDataSource(this.ListAbsen);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;

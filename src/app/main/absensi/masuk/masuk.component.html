@@ -78,7 +78,7 @@
             <div class="logo " fxLayout="row" fxLayoutAlign="start center">
                 <mat-form-field appearance="outline" class="category-selector" style="margin-top: 15px;">
                     <mat-label>Tanggal Hari Ini</mat-label>
-                    <input name="DateNow" matInput [(ngModel)]="DateNow" (keyup)="FilterDate($event.target.value)"
+                    <input name="DateNow" matInput [(ngModel)]="DateNow" (ngModelChange)="onDateSelected($event)"
                        [matDatepicker]="dp3">
                     <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
                     <mat-datepicker #dp3 disabled="false"></mat-datepicker>
