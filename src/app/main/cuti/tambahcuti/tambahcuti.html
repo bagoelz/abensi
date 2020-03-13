@@ -73,7 +73,7 @@
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Tanggal Mulai</mat-label>
                     <!-- -->
-                    <input name="mulai" formControlName="mulai" matInput [(ngModel)]="ModelCuti.mulai" [min]="minDate" 
+                    <input name="mulai" formControlName="mulai" matInput [(ngModel)]="ModelCuti.mulai" [min]="minDate"
                         (ngModelChange)="onDataChange($event)" [matDatepicker]="dp3" required readonly>
                     <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
                     <mat-datepicker #dp3 disabled="false"></mat-datepicker>
@@ -107,7 +107,7 @@
                 <!-- <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto"> -->
                 <div class="uploadfilecontainer" (click)="openfile()">
                     <input id="fileSrc" style="display:none" type="file" (change)="fileChange($event)"
-                        placeholder="Upload file" accept=".pdf,.jpg,.png,.pdf" >
+                        placeholder="Upload file" accept=".pdf" >
                 </div>
             </div>
             <span class="title dialog-title" style="margin-bottom: -12px; font-weight: 800;" *ngIf="files.length !== 0 ">Click nama file untuk lihat lampiran</span>
@@ -124,7 +124,7 @@
 
     <div mat-dialog-actions class="m-0 p-16" fxLayout="row" fxLayoutAlign="end center">
         <button matTooltip="SIMPAN" mat-button class="save-button" aria-label="SAVE" color="accent"
-            (click)="Validate()">SIMPAN
+            (click)="simpan()">SIMPAN
         </button>
         <button [mat-dialog-close] matTooltip="TUTUP" mat-button class="save-button" aria-label="TUTUP"
             color="warn">TUTUP

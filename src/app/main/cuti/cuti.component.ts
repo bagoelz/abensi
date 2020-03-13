@@ -284,6 +284,7 @@ export class dialogCuti {
   capdis:String;
   libCuti:any = [];
   tmpFilterNip:any = [];
+  validasiBulan:Boolean;
   // fileData: File = null;
   // previewUrl:any = null;
   // fileUploadProgress: string = null;
@@ -443,15 +444,16 @@ export class dialogCuti {
     let uid = this.uid;
     let mulai = this.tglmulai.valueOf() / 1000;
     let akhir = this.tglakhir.valueOf() / 1000;
-    console.log(uid, mulai, akhir);
-
+    let hasil;
     this.API.getValidate(uid, mulai, akhir).subscribe(result=>{
       const status = result['status'];
-      console.log(result);
       if(!status){
         this.toastr.warning(result['message'], "Cek tanggal SPT");
+        this.validasiBulan = false;
+      }else{
+        this.validasiBulan = true;
       }
-    });
+      });
   }
 
   async simpan() {
@@ -465,6 +467,11 @@ export class dialogCuti {
     }
     if (mulai > akhir) {
       this.toastr.warning("Tanggal mulai tidak boleh lebih besar tanggal akhir", "Informasi");
+      return;
+    }
+
+    if(!this.validasiBulan){
+      this.toastr.warning("Tanggal tidak bisa di gunakan", "Cek tanggal SPT");
       return;
     }
 
