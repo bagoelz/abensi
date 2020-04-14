@@ -103,9 +103,9 @@ export class LoginComponent
     loadSpinner(){
         this.spinnerWithoutBackdrop = true;
         }
-        closeSpinner(){
-          this.spinnerWithoutBackdrop = false;
-        }
+    closeSpinner(){
+        this.spinnerWithoutBackdrop = false;
+    }
        
     isLoggedIn() {
     //    this.islogged = this.afAuth.auth.currentUser;

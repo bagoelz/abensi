@@ -1,3 +1,5 @@
+<app-progress-spinner class="example-margin" [color]="color" [mode]="mode" [value]="value" [backdropEnabled]="true" [displayProgressSpinner]="spinnerWithoutBackdrop" >
+</app-progress-spinner>
 <div class="dialog-content-wrapper">
     <mat-toolbar matDialogTitle class="mat-accent m-0">
         <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
@@ -73,7 +75,7 @@
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Tanggal Mulai</mat-label>
                     <!-- -->
-                    <input name="mulai" formControlName="mulai" matInput [(ngModel)]="ModelCuti.mulai" [min]="minDate"
+                    <input name="mulai" formControlName="mulai" matInput [(ngModel)]="ModelCuti.mulai" 
                         (ngModelChange)="onDataChange($event)" [matDatepicker]="dp3" required readonly>
                     <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
                     <mat-datepicker #dp3 disabled="false"></mat-datepicker>
@@ -85,7 +87,7 @@
                     <mat-label>Tanggal Akhir</mat-label>
                     <!-- <mat-icon matSuffix class="secondary-text">access_time</mat-icon> -->
                     <!--  -->
-                    <input name="akhir" formControlName="akhir" matInput [(ngModel)]="ModelCuti.akhir" [min]="minDate" readonly 
+                    <input name="akhir" formControlName="akhir" matInput [(ngModel)]="ModelCuti.akhir"  readonly 
                         (ngModelChange)="onDataChange2($event)" [matDatepicker]="dp4" required readonly>
                     <mat-datepicker-toggle matSuffix [for]="dp4"></mat-datepicker-toggle>
                     <mat-datepicker #dp4 disabled="false"></mat-datepicker>

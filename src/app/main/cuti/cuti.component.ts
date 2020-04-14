@@ -240,6 +240,7 @@ export class DetailCuti {
     this.lib = this.data.lib;
     this.bulan = this.data.bulan;
     this.FinalData = this.lib.filter(item => item.user_id === this.UserData.user_id);
+    console.log(this.FinalData);
     this.gambar = this.FinalData[0].user_picture;
     this.fullname = this.FinalData[0].fullname;
     this.jabatan = this.FinalData[0].jabatan;
@@ -285,6 +286,11 @@ export class dialogCuti {
   libCuti:any = [];
   tmpFilterNip:any = [];
   validasiBulan:Boolean;
+
+  color = 'accent';
+  mode = 'indeterminate';
+  value = 80;
+  spinnerWithoutBackdrop = false;
   // fileData: File = null;
   // previewUrl:any = null;
   // fileUploadProgress: string = null;
@@ -456,6 +462,13 @@ export class dialogCuti {
       });
   }
 
+  loadSpinner(){
+    this.spinnerWithoutBackdrop = true;
+    }
+  closeSpinner(){
+      this.spinnerWithoutBackdrop = false;
+  }
+
   async simpan() {
     let uid = this.uid;
     let mulai = this.tglmulai.valueOf() / 1000;
@@ -470,25 +483,27 @@ export class dialogCuti {
       return;
     }
 
-    if(!this.validasiBulan){
-      this.toastr.warning("Tanggal tidak bisa di gunakan", "Cek tanggal SPT");
-      return;
-    }
-
+    // if(!this.validasiBulan){
+    //   this.toastr.warning("Tanggal tidak bisa di gunakan", "Cek tanggal SPT");
+    //   return;
+    // }
+    this.loadSpinner();
     this.API.addCuti(uid, mulai, akhir, ket, this.file, this.capdis.toString()).subscribe(result => {
       const status = result['status'];
       const desc = result['desc'];
 
       if (status === 'OK') {
+        this.closeSpinner();
         this.ModelCuti = [];
         this.toastr.success("Data berhasil disimpan", "Informasi");
         this.dialogRef.close({event:'update'});
       }else{
+        this.closeSpinner();
         this.toastr.error("Data gagal disimpan", "Informasi");
         this.dialogRef.close({event:'cancel'});
       }
     });
-  }
+   }
 }
 
 @Component({

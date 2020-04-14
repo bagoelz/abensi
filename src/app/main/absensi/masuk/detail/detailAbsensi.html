@@ -73,7 +73,7 @@
                 </mat-form-field>
             </div> -->
 
-            <div fxLayout="row" fxLayoutAlign="start start" >
+            <div fxLayout="row" fxLayoutAlign="start start" *ngIf="auth.level==1">
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Status</mat-label>
                     <mat-icon matSuffix class="secondary-text">info</mat-icon>
@@ -86,6 +86,22 @@
                         <mat-option [value]="'4'"> Izin </mat-option>
                         <mat-option [value]="'5'"> Absen </mat-option>
                         <mat-option [value]="'6'"> Ditolak </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start start" *ngIf="auth.level==2">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Status</mat-label>
+                    <mat-icon matSuffix class="secondary-text">info</mat-icon>
+                    <mat-select name="status" placeholder="Status" [(ngModel)]="data.status" formControlName="status"
+                        (selectionChange)="onChange($event)">
+                        <mat-option [value]="'0'"> Kosong</mat-option>
+                        <mat-option [value]="'1'"> SPT</mat-option>
+                        <mat-option [value]="'2'"> Cuti</mat-option>
+                        <mat-option [value]="'3'"> Sakit</mat-option>
+                        <mat-option [value]="'4'"> Izin </mat-option>
+                        <mat-option [value]="'5'"> Absen </mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
