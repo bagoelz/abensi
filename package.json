@@ -60,7 +60,7 @@
         "ngx-toastr": "11.2.1",
         "pdfmake": "0.1.64",
         "perfect-scrollbar": "1.4.0",
-        "prismjs": "1.16.0",
+        "prismjs": "1.24.0",
         "rxjs": "6.5.2",
         "web-animations-js": "github:angular/web-animations-js#release_pr208",
         "zone.js": "0.9.1"
