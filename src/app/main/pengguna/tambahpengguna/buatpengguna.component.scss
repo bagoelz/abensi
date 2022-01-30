@@ -2,6 +2,8 @@
 
 .dialog {
 
+  
+
     @include media-breakpoint('xs') {
         width: 100%;
     }
@@ -27,9 +29,14 @@
         max-height: 85vh;
         display: flex;
         flex-direction: column;
+        .selectedRow {
+            background-color: rgb(62, 175, 240) !important;
+            color: white !important;
+        }
     }
 
     .category-selector {
         min-width: 320px;
     }
 }
+

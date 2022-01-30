@@ -21,9 +21,9 @@
                 <mat-chip *ngIf="auth.level == 2" (click)="PassUpdate(data)">Ubah Password</mat-chip>
             </mat-chip-list>
         </mat-toolbar-row>
-        <mat-toolbar-row fxLayout="row" fxLayoutAlign="end start" *ngIf=" flag && data.status === '1'">
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="end start">
             <mat-chip-list [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}" style="padding-bottom: 0px;">
-                <mat-chip *ngIf="auth.level == 2 || auth.level == 1 " (click)="PassUpdate(data)">Ubah Password</mat-chip>
+                <mat-chip  (click)="PassUpdate(data)">Ubah Password</mat-chip>
             </mat-chip-list>
         </mat-toolbar-row>
     </mat-toolbar>
@@ -90,7 +90,7 @@
                 <mat-form-field appearance="outline" fxFlex class="category-selector">
                     <mat-label>Jabatan</mat-label>
                     <mat-select placeholder="Jabatan" [(ngModel)]="ModelPengguna.jabatan" [disabled]="flag && auth.level == 2" [formControl]="jbtnControl">
-                        <mat-option [value]="item.id" *ngFor="let item of jabatan; let i = index" >
+                        <mat-option [value]="item.jabatan" *ngFor="let item of jabatan; let i = index" >
                             {{item.jabatan}}
                         </mat-option>
                     </mat-select>
@@ -117,18 +117,7 @@
 
             <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
                 <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>No. HP</mat-label>
-                    <input matInput placeholder="No. HP" required [(ngModel)]="ModelPengguna.hp"
-                        [formControl]="hpControl">
-                    <mat-error *ngIf="hpControl.invalid">
-                        {{getRequiredErrorMessage('hpControlGroup')}}
-                    </mat-error>
-                </mat-form-field>
-            </div>
-
-            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Capdis</mat-label>
+                    <mat-label>Cabang</mat-label>
                     <mat-select placeholder="Capdis" [(ngModel)]="ModelPengguna.capdis" [formControl]="cpControl"
                         style="width: 400px;">
                         <mat-option [value]="item.id" *ngFor="let item of cabang; let i = index">{{item.nama}}
@@ -140,6 +129,22 @@
                 </mat-form-field>
             </div>
 
+            <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
+                <mat-form-field appearance="outline" fxFlex >
+                    <mat-label>Jadwal absen</mat-label>
+                    <mat-select placeholder="Status absen" [(ngModel)]="ModelPengguna.jadwal" [formControl]="stsabsen"
+                    >
+                        <mat-option [value]="'na'"> NA (bebas keluar dan masuk) </mat-option>
+                        <mat-option [value]="'na2'"> NA (8 Jam kerja) </mat-option>
+                        <mat-option [value]="item.id" *ngFor="let item of jadwalBaru; let i = index" >
+                            {{item.keterangan}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="stsabsen.invalid">
+                        {{getRequiredErrorMessage('lvlControlGroup')}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
 
 
             <div class="mb-24" fxLayout="row" fxLayoutAlign="start start">
@@ -155,9 +160,9 @@
                         [disabled]="editable">
                         <mat-option [value]="'3'"> User </mat-option>
                     </mat-select>
-                    <mat-error *ngIf="lvlControl.invalid">
+                    <!-- <mat-error *ngIf="lvlControl.invalid">
                         {{getRequiredErrorMessage('lvlControlGroup')}}
-                    </mat-error>
+                    </mat-error> -->
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" fxFlex *ngIf="data === null">

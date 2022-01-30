@@ -39,6 +39,8 @@ import localeId from '@angular/common/locales/id';
 import { from } from 'rxjs';
 
 import { ToastrModule } from 'ngx-toastr';
+import { JadwalComponent } from './main/jadwal/jadwal/jadwal.component';
+import { JadwalModule } from './main/jadwal/jadwal/jadwal.module';
 
 registerLocaleData(localeId, 'id');
 
@@ -56,6 +58,7 @@ const appRoutes: Routes = [
 @NgModule({
     declarations: [
         AppComponent,
+        JadwalComponent,
     ],
     imports: [
         BrowserModule,
@@ -106,7 +109,8 @@ const appRoutes: Routes = [
         SignoutModule,
         CapdisModule,
         CutiModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        JadwalModule,
     ],
     providers: [
         ApiService,

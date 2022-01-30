@@ -94,12 +94,12 @@
 <!-- ----------------------------------------------------------------------------------------------------- -->
 
 <!-- TOOLBAR -->
-<!-- <ng-template #toolbar>
-    <toolbar *ngIf="!fuseConfig.layout.toolbar.hidden"
+<ng-template #toolbar >
+    <toolbar *ngIf="!fuseConfig.layout.toolbar.hidden" fxHide fxShow.sm
              [ngClass]="fuseConfig.layout.toolbar.customBackgroundColor === true ? fuseConfig.layout.toolbar.position + ' ' + fuseConfig.layout.toolbar.background : fuseConfig.layout.toolbar.position">
     </toolbar>
-</ng-template> -->
-<!-- / TOOLBAR -->
+</ng-template> 
+<!-- / TOOLBAR-->
 
 <!-- FOOTER -->
 <!-- <ng-template #footer>

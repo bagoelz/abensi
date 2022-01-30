@@ -64,21 +64,21 @@ export const navigation: FuseNavigation[] = [
 
             // },
 
-            {
-                id: 'ttp',
-                title: 'TTP',
-                translate: 'NAV.TTP.TITLE',
-                type: 'item',
-                icon: 'list',
-                url: '/ttp',
-                // badge    : {
-                //     title    : '25',
-                //     translate: 'NAV.DETAIL.BADGE',
-                //     bg       : '#F44336',
-                //     fg       : '#FFFFFF'
-                // }
+            // {
+            //     id: 'ttp',
+            //     title: 'TTP',
+            //     translate: 'NAV.TTP.TITLE',
+            //     type: 'item',
+            //     icon: 'list',
+            //     url: '/ttp',
+            //     // badge    : {
+            //     //     title    : '25',
+            //     //     translate: 'NAV.DETAIL.BADGE',
+            //     //     bg       : '#F44336',
+            //     //     fg       : '#FFFFFF'
+            //     // }
 
-            },
+            // },
 
             // {
             //     id: 'kalendar',
@@ -108,7 +108,7 @@ export const navigation: FuseNavigation[] = [
                 title: 'Keluar',
                 translate: 'NAV.KELUAR.TITLE',
                 type: 'item',
-                icon: 'list',
+                icon: 'logout',
                 url: '/signout',
                 // badge    : {
                 //     title    : '25',

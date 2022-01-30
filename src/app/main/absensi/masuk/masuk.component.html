@@ -24,10 +24,10 @@
 
             <div class="logo mb-24 mb-md-0" fxLayout="row" fxLayoutAlign="start center" *ngIf="auth.level== 1">
                 <mat-form-field appearance="outline" class="category-selector" *ngIf="auth.level==1">
-                    <mat-label>Pilih Capdis</mat-label>
+                    <mat-label>Pilih Cabang</mat-label>
                     <mat-select [(ngModel)]="Capdis.pilih" (selectionChange)="onChange($event.value)">
                         <mat-option [value]="'null'">
-                            Pilih Capdis
+                            Pilih Cabang
                         </mat-option>
                         <mat-option *ngFor=" let item of cabang" [value]="item.id">
                             {{item.nama}}
@@ -40,9 +40,9 @@
             <div>
                 <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0"
                     style="margin-right: 10px !important" (click)="openKalendar()">
-                    <mat-icon style="size: 5px;">date_range</mat-icon><span> Absen</span>
+                    <mat-icon style="size: 5px;">settings</mat-icon><span> Absen</span>
                 </button>
-                <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0">
+                <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0" (click)="generateExcel()">
                     <span>Cetak Absensi</span>
                 </button>
             </div>
@@ -85,7 +85,7 @@
                 </mat-form-field>
             </div>
             </div>
-            <mat-table #table [dataSource]="dataSource" matSort [@animateStagger]="{value:'50'}" fusePerfectScrollbar>
+            <mat-table id="DataTable" #table [dataSource]="dataSource" matSort [@animateStagger]="{value:'50'}" fusePerfectScrollbar>
 
                 <!-- Name Column -->
                 <!-- {{element.tgl_jam |  date: 'd MMMM yyyy - h:mm:ss a'}} -->
@@ -117,7 +117,7 @@
                     <mat-header-cell fxFlex="10%" *matHeaderCellDef>Jam Masuk</mat-header-cell>
                     <mat-cell fxFlex="10%" *matCellDef="let element">
                         <p class="text-truncate" *ngIf="element.status === '2' || element.status === '1'">-</p>
-                        <p class="text-truncate" *ngIf="element.status === '0'">{{element.jam_masuk}}</p>
+                        <p class="text-truncate" >{{element.jam_masuk}}</p>
 
                     </mat-cell>
                 </ng-container>
@@ -128,7 +128,7 @@
                         <p class="text-truncate"
                             *ngIf="element.status === '2' || element.status === '1' || element.jam_keluar === null">-
                         </p>
-                        <p class="text-truncate" *ngIf="element.status === '0'">{{element.jam_keluar}}</p>
+                        <p class="text-truncate" *ngIf="element.status !== '8'">{{element.jam_keluar}}</p>
                     </mat-cell>
                 </ng-container>
 

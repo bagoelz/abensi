@@ -29,7 +29,7 @@ export class ApiService {
     //   return response;
     //
 
-    return this.http.get(this.BaseURL + 'pengguna/getUser',pilih).pipe(map(response => {
+    return this.http.get(this.BaseURL + 'pengguna/getUser', pilih).pipe(map(response => {
       return response;
     }));
   }
@@ -48,7 +48,7 @@ export class ApiService {
     //   return response;
     //
 
-    return this.http.get(this.BaseURL + 'pengguna2/completeUser',pilih).pipe(map(response => {
+    return this.http.get(this.BaseURL + 'pengguna2/completeUser', pilih).pipe(map(response => {
       return response;
     }));
   }
@@ -64,7 +64,7 @@ export class ApiService {
       headers: headers
     };
 
-    return this.http.get(this.BaseURL + 'Pengguna/cabang',pilih).pipe(map(response => {
+    return this.http.get(this.BaseURL + 'Pengguna/cabang', pilih).pipe(map(response => {
       return response;
     }));
   }
@@ -72,7 +72,8 @@ export class ApiService {
   getAUTH(user, password) {
     const formData: FormData = new FormData();
     let headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': '',
     });
     let options = {
       headers: headers
@@ -87,7 +88,7 @@ export class ApiService {
   }
 
 
-  addUser(auth:any,username: string, password: string, hp:string,nama_lengkap: string, nip: string, jabatan: string, gender: string, capdis: string, level: string, profilPic: any): Observable<any> {
+  addUser(auth: any, username: string, password: string, hp: string, nama_lengkap: string, nip: string, jabatan: string, gender: string, capdis: string, level: string, profilPic: any, stsabsen: string): Observable<any> {
 
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -109,20 +110,21 @@ export class ApiService {
     formData.append('p_hp', hp);
     formData.append('p_capdis', capdis);
     formData.append('p_level', level);
+    formData.append('p_jadwalMasukBaru', stsabsen);
     formData.append('p_attachment', profilPic, profilPic.name !== undefined ? profilPic.name : null);
 
     // return this.http.post(this.BaseURL + 'pengguna2/tambahpengguna/',formData,pilih)
     //   .pipe(map(response => {
     //     return response;
     //   }));
-    return this.http.post(this.BaseURL + 'pengguna2/tambahpengguna/',formData)
+    return this.http.post(this.BaseURL + 'pengguna2/tambahpengguna/', formData)
       .pipe(map(response => {
         return response;
       }));
   }
 
 
-  addUser2(auth:any,username: string, password: string, nama_lengkap: string, nip: string, jabatan: string, gender: string, capdis: string, level: string): Observable<any> {
+  addUser2(auth: any, username: string, password: string, nama_lengkap: string, nip: string, jabatan: string, gender: string, capdis: string, level: string, stsabsen: string): Observable<any> {
     const formData: FormData = new FormData();
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -144,14 +146,15 @@ export class ApiService {
     // formData.append('p_hp', hp);
     formData.append('p_capdis', capdis);
     formData.append('p_level', level);
+    formData.append('p_jadwalMasuk', stsabsen);
 
-    return this.http.post(this.BaseURL + 'pengguna/tambahpengguna2/', formData,pilih)
+    return this.http.post(this.BaseURL + 'pengguna/tambahpengguna2/', formData, pilih)
       .pipe(map(response => {
         return response;
       }));
   }
 
-  updateUser(auth:any,uid: string,hp:string, username: string, nama_lengkap: string, nip: string, jabatan: string, gender: string, capdis: string, level: string): Observable<any> {
+  updateUser(auth: any, uid: string, hp: string, username: string, nama_lengkap: string, nip: string, jabatan: string, gender: string, capdis: string, level: string, stsabsen: string): Observable<any> {
     const formData: FormData = new FormData();
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -173,6 +176,7 @@ export class ApiService {
     formData.append('p_hp', hp);
     formData.append('p_capdis', capdis);
     formData.append('p_level', level);
+    formData.append('p_jadwalMasukBaru', stsabsen);
 
     // return this.http.post(this.BaseURL + 'pengguna2/updatepengguna/', formData,pilih)
     //   .pipe(map(response => {
@@ -184,7 +188,7 @@ export class ApiService {
       }));
   }
 
-  updateUser2(uid: string,profil:string,hp:string,username: string, nama_lengkap: string, nip: string, jabatan: string, gender: string, capdis: string, level: string, profilPic: any): Observable<any> {
+  updateUser2(uid: string, profil: string, hp: string, username: string, nama_lengkap: string, nip: string, jabatan: string, gender: string, capdis: string, level: string, profilPic: any): Observable<any> {
     const formData: FormData = new FormData();
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'
@@ -211,7 +215,7 @@ export class ApiService {
       }));
   }
 
-  deleteUser(auth:any,uid: string,profil:string,level: string): Observable<any> {
+  deleteUser(auth: any, uid: string, profil: string, level: string): Observable<any> {
     const formData: FormData = new FormData();
     let headers = new HttpHeaders({
       'Content-Type': 'application/json'
@@ -265,7 +269,7 @@ export class ApiService {
     let pilih = {
       headers: headers
     };
-    return this.http.get(this.BaseURL + 'ttp/index',pilih).pipe(map(response => {
+    return this.http.get(this.BaseURL + 'ttp/index', pilih).pipe(map(response => {
       return response;
     }));
   }
@@ -280,13 +284,13 @@ export class ApiService {
     let pilih = {
       headers: headers
     };
-    return this.http.get(this.BaseURL + 'ttp/index2',pilih).pipe(map(response => {
+    return this.http.get(this.BaseURL + 'ttp/index2', pilih).pipe(map(response => {
       return response;
     }));
   }
 
 
-  approve(auth:string,uid: string, status: string): Observable<any> {
+  approve(auth: string, uid: string, status: string): Observable<any> {
 
     const formData: FormData = new FormData();
 
@@ -306,9 +310,9 @@ export class ApiService {
     //     return response;
     //   }));
     return this.http.post(this.BaseURL + 'pengguna2/validasi/', formData,)
-    .pipe(map(response => {
-      return response;
-    }));
+      .pipe(map(response => {
+        return response;
+      }));
   }
 
   ReportTTP(auth) {
@@ -321,7 +325,7 @@ export class ApiService {
     let pilih = {
       headers: headers
     };
-    return this.http.get(this.BaseURL + 'ttp/ttpreport',pilih).pipe(map(response => {
+    return this.http.get(this.BaseURL + 'ttp/ttpreport', pilih).pipe(map(response => {
       return response;
     }));
   }
@@ -337,7 +341,7 @@ export class ApiService {
       headers: headers
     };
 
-    return this.http.get(this.BaseURL + 'absensi/absenMasuk',pilih).pipe(map(response => {
+    return this.http.get(this.BaseURL + 'absensi/absenMasuk', pilih).pipe(map(response => {
       return response;
     }));
   }
@@ -368,7 +372,7 @@ export class ApiService {
       headers: headers
     };
 
-    return this.http.get(this.BaseURL + 'capdis/ambilCapdis',pilih).pipe(map(response => {
+    return this.http.get(this.BaseURL + 'capdis/ambilCapdis', pilih).pipe(map(response => {
       return response;
     }));
   }
@@ -492,7 +496,7 @@ export class ApiService {
     }));
   }
 
-  BatalAbsensi(auth:any,pkp:any,uid: string): Observable<any> {
+  BatalAbsensi(auth: any, pkp: any, uid: string): Observable<any> {
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': auth,
@@ -552,7 +556,7 @@ export class ApiService {
       }));
   }
 
-  addCuti(uid: string, mulai: any, akhir: any, ket: string, file: any, capdis:string): Observable<any> {
+  addCuti(uid: string, mulai: any, akhir: any, ket: string, file: any, capdis: string): Observable<any> {
     const formData: FormData = new FormData();
     let options = {
       headers: new HttpHeaders({
@@ -584,12 +588,12 @@ export class ApiService {
     let pilih = {
       headers: headers
     };
-    return this.http.get(this.BaseURL + 'absensi/jadwal/',pilih).pipe(map(response => {
+    return this.http.get(this.BaseURL + 'absensi/jadwal/', pilih).pipe(map(response => {
       return response;
     }));
   }
 
-  updateJadwal(auth:any,id: string, masuk: any, pulang: any): Observable<any> {
+  updateJadwal(auth: any, id: string, masuk: any, pulang: any): Observable<any> {
     const formData: FormData = new FormData();
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -614,4 +618,20 @@ export class ApiService {
         return response;
       }));
   }
-} 
+
+  changeUserJadwal(auth: any, idJadwal: string, users: any): Observable<any> {
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': auth,
+      'Accept-Language': ['en-US', 'en', 'q=0.9'],
+      'Accept': ['application/json', 'text/plain', '*/*']
+    });
+    let pilih = {
+      headers: headers
+    };
+    return this.http.post(this.BaseURL + 'pengguna2/tentukanJadwal/', JSON.stringify({ idJadwal: idJadwal, listUsers: users }),)
+      .pipe(map(response => {
+        return response;
+      }));
+  }
+}

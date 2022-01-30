@@ -1,7 +1,7 @@
 <div class="dialog-content-wrapper">
     <mat-toolbar matDialogTitle class="mat-accent m-0">
         <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
-            <span class="title dialog-title">Setting Jadwal</span>
+            <span class="title dialog-title">Pilih Jadwal</span>
             <button mat-icon-button [mat-dialog-close] aria-label="Close dialog" matTooltip="Tutup">
                 <mat-icon>close</mat-icon>
             </button>
@@ -10,48 +10,77 @@
 
     <div mat-dialog-content class="p-24 pb-0 m-0" fusePerfectScrollbar>
         <mat-table #table [dataSource]="dataSource" matSort [@animateStagger]="{value:'50'}" fusePerfectScrollbar>
-            <ng-container matColumnDef="hari">
-                <mat-header-cell fxFlex="30%" *matHeaderCellDef style="font-weight: 800;">Hari</mat-header-cell>
-                <mat-cell fxFlex="30%" *matCellDef="let element">
-                    <p class="text-truncate" style="font-weight: 800;">{{element.hari}}</p>
+            <ng-container matColumnDef="no">
+                <mat-header-cell *matHeaderCellDef>No</mat-header-cell>
+                <mat-cell *matCellDef="let element; let i =index;">
+                    <p class="text-truncate">{{i+1}}</p>
                 </mat-cell>
             </ng-container>
 
-            <!-- ID Column -->
-            <ng-container matColumnDef="masuk">
-                <mat-header-cell fxFlex="30%" *matHeaderCellDef>Jam Masuk</mat-header-cell>
-                <mat-cell fxFlex="30%" *matCellDef="let element">
-                    <p class="text-truncate">{{element.masuk}}</p>
-                </mat-cell>
-            </ng-container>
-            <!-- Name Column -->
-
-            <!-- Category Column -->
-            <ng-container matColumnDef="keluar">
-                <mat-header-cell *matHeaderCellDef>Jam Keluar</mat-header-cell>
+            <ng-container matColumnDef="keterangan">
+                <mat-header-cell *matHeaderCellDef>Keterangan</mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <p class="text-truncate">{{element.pulang}}</p>
+                    <p class="text-truncate">{{element.keterangan}}</p>
                 </mat-cell>
             </ng-container>
 
+            <ng-container matColumnDef="statusabsen">
+                <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <p class="text-truncate">{{element.statusAbsen}}</p>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="harikerja">
+                <mat-header-cell *matHeaderCellDef>Jlh. Hari Kerja</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <p class="text-truncate">{{element.jlhHari}}</p>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="jamkerja">
+                <mat-header-cell *matHeaderCellDef>Jam Kerja (menit)</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <p class="text-truncate" *ngIf="element.status !=='reg'">{{element.jamKerjaSatu}} |
+                        {{element.jamKerjaDua}} | {{element.jamKerjaTiga}} menit</p>
+                    <p class="text-truncate" *ngIf="element.status ==='reg'">{{element.jamKerja}} menit</p>
+                </mat-cell>
+
+            </ng-container>
+
+            <ng-container matColumnDef="bolehabsen">
+                <mat-header-cell *matHeaderCellDef>Absen diperbolehkan (menit)</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <p class="text-truncate">{{element.bolehMasuk}}</p>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="toleransi">
+                <mat-header-cell *matHeaderCellDef>Toleransi (menit)</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <p class="text-truncate">{{element.toleransi}}</p>
+                </mat-cell>
+            </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
-            <mat-row (click)="update(element)" *matRowDef="let element; columns: displayedColumns;" class="product"
-                matRipple [@animate]="{value:'*',params:{y:'100%'}}">
+            <mat-row (click)="getRow(element)" *matRowDef="let element;columns: displayedColumns;"
+                class="product" matRipple [@animate]="{value:'*',params:{y:'100%'}}"
+                [ngClass]="{'selectedRow': selectedJadwal === element}">
             </mat-row>
 
         </mat-table>
+        <!-- [length]="dataSource.filteredData.length" -->
         <mat-paginator #paginator [pageIndex]="0" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
         </mat-paginator>
     </div>
-    <!-- <div mat-dialog-actions class=" m-0 p-16" fxLayout="row" fxLayoutAlign="end center">
+    <div mat-dialog-actions class=" m-0 p-16" fxLayout="row" fxLayoutAlign="end center">
         <button matTooltip="UPDATE" mat-button class="save-button" aria-label="UPDATE" color="accent"
             [disabled]="buttonDisabled" (click)="OnUpdate()">
-            UPDATE
+            Simpan
         </button>
-        <button (click)="Cancel()" matTooltip="BATALKAN" mat-button class="save-button" aria-label="BATALAKAN"
+        <button  matTooltip="BATALKAN" [mat-dialog-close] mat-button class="save-button" aria-label="BATALAKAN"
             color="warn">
-            BATALKAN
+            Cancel
         </button>
 
-    </div> -->
+    </div>
 </div>

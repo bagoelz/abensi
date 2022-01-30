@@ -1,0 +1,146 @@
+<div class="dialog-content-wrapper">
+    <mat-toolbar matDialogTitle class="mat-accent m-0">
+        <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="title dialog-title">Editor jadwal untuk hari {{Jadwal.item.hari.hari}}</span>
+            <button mat-icon-button [mat-dialog-close] aria-label="Close dialog" matTooltip="Tutup">
+                <mat-icon>close</mat-icon>
+            </button>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <div mat-dialog-content class="p-2 pb-0 " fusePerfectScrollbar>
+
+        <form class="event-form mt-2" fxLayout="column">
+            <div class="mb-24" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="start start">
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Absen di perbolehkan (menit)</mat-label>
+                    <input matInput type="number" name="bolehmasuk" [(ngModel)]="Jadwal.item.bolehMasuk">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Toleransi telat (menit)</mat-label>
+                    <input matInput type="number" name="toleransi" [(ngModel)]="Jadwal.item.toleransi">
+                </mat-form-field>
+            </div>
+
+            <div style="margin-bottom: 10px;">
+                <mat-label>Gunakan format 24 Jam</mat-label>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="10px" fxLayout.gt-xs="row" fxLayout.gt-xs="row"
+                *ngIf="Jadwal.stsabsen==='reg'">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Jam Masuk Regular</mat-label>
+                    <input matInput type="time" name="start" [(ngModel)]="Jadwal.item.masuk">
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Jumlah jam kerja</mat-label>
+                    <input matInput type="number" name="jamkerja" [(ngModel)]="JamKerja" (change)="resetList()">
+                </mat-form-field>
+                <mat-form-field class="example-chip-list" appearance="outline"
+                    *ngIf="Jadwal.item.masuk && Jadwal.item.break" fxFlex>
+                    <mat-chip-list #chipListReg aria-label="Istirahat Regular selection">
+                        <mat-chip *ngFor="let reg of Jadwal.item.breakReg" [selectable]="selectable"
+                            [removable]="removable" (removed)="remove(reg)">
+                            {{reg.value}}
+                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                        </mat-chip>
+                    </mat-chip-list>
+                    <button mat-icon-button color="accent" aria-label="Example icon-button with a heart icon"
+                        (click)="addWaktu()">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+
+
+
+            <div fxLayout="row" fxLayoutGap="10px" fxLayout.gt-xs="row" *ngIf="Jadwal.stsabsen==='shift'">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Shift 1 masuk</mat-label>
+                    <input matInput type="text" name="satuMasuk" [(ngModel)]="Jadwal.item.satuMasuk">
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Jam kerja</mat-label>
+                    <input matInput type="number" name="kerjaSatu" [(ngModel)]="Jadwal.item.kerjaSatu">
+                  </mat-form-field>
+                <mat-form-field class="example-chip-list" appearance="outline" fxFlex
+                    *ngIf="Jadwal.satuMasuk && Jadwal.item.break">
+                    <mat-chip-list #chipList1 aria-label="Istirahat satu selection">
+                        <mat-chip *ngFor="let satu of Jadwal.item.breakSatu" [selectable]="selectable"
+                            [removable]="removable" (removed)="remove(satu,1)">
+                            {{satu.value}}
+                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                        </mat-chip>
+                    </mat-chip-list>
+                    <button mat-icon-button color="accent" aria-label="Example icon-button with a heart icon"
+                        (click)="addWaktu(1)">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+
+            <div fxLayout="row" fxLayoutGap="10px" fxLayout.gt-xs="row" *ngIf="Jadwal.stsabsen==='shift'">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Shift 2 masuk</mat-label>
+                    <input matInput type="text" name="duaMasuk" [(ngModel)]="Jadwal.item.duaMasuk">
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Jam kerja</mat-label>
+                    <input matInput type="number" name="kerjaDua" [(ngModel)]="Jadwal.item.kerjaDua">
+                  </mat-form-field>
+                <mat-form-field class="example-chip-list" appearance="outline" fxFlex
+                    *ngIf="Jadwal.item.duaMasuk && Jadwal.item.break">
+                    <mat-chip-list #chipList2 aria-label="Istirahat dua selection">
+                        <mat-chip *ngFor="let dua of Jadwal.item.breakDua" [selectable]="selectable"
+                            [removable]="removable" (removed)="remove(dua,2)">
+                            {{dua.value}}
+                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                        </mat-chip>
+                    </mat-chip-list>
+                    <button mat-icon-button color="accent" aria-label="Example icon-button with a heart icon"
+                        (click)="addWaktu(2)">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+
+
+
+            <div fxLayout="row" fxLayoutGap="10px" fxLayout.gt-xs="row" *ngIf="Jadwal.stsabsen==='shift'">
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Shift 3 masuk</mat-label>
+                    <input matInput type="input" name="tigaMasuk" [(ngModel)]="Jadwal.item.tigaMasuk">
+                </mat-form-field>
+                <mat-form-field appearance="outline" fxFlex>
+                    <mat-label>Jam kerja</mat-label>
+                    <input matInput type="number" name="kerjaTiga" [(ngModel)]="Jadwal.item.kerjaTiga">
+                  </mat-form-field>
+                <mat-form-field class="example-chip-list" appearance="outline" fxFlex
+                    *ngIf="Jadwal.item.tigaMasuk  && Jadwal.item.break">
+                    <mat-chip-list #chipList3 aria-label="Istirahat tiga selection">
+                        <mat-chip *ngFor="let tiga of Jadwal.item.breakTiga" [selectable]="selectable"
+                            [removable]="removable" (removed)="remove(tiga,3)">
+                            {{tiga.value}}
+                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                        </mat-chip>
+                        <button mat-icon-button color="accent" aria-label="Example icon-button with a heart icon"
+                            (click)="addWaktu(3)">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </mat-chip-list>
+                </mat-form-field>
+            </div>
+
+            <div mat-dialog-actions class="m-0 p-16" fxLayout="row" fxLayoutAlign="end center">
+                <button mat-button class="save-button mat-accent" aria-label="SAVE" (click)="onSave()">Simpan
+                </button>
+                <button mat-button class="save-button mat-warn" aria-label="DELETE" [mat-dialog-close]>Batal
+                </button>
+                <!-- <button mat-button (click)="SaveToaster()">test</button> -->
+            </div>
+        </form>
+
+    </div>
+</div>

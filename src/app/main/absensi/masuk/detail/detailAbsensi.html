@@ -18,28 +18,61 @@
     <div mat-dialog-content class="p-24 pb-0 m-0" fusePerfectScrollbar>
         <mat-toolbar-row class="toolbar-bottom py-16" fxLayout="row" fxLayout="row" fxLayoutAlign="space-evenly center">
             <div>
-             <img src="{{imgUrl}}absenmasuk/{{data.fotomasuk}}" class="avatar contact-avatar huge m-0">
-             <!-- <input type="file" id="imgupload" class="file_input" (change)="getFileAttachment($event)"
+                <img src="{{imgUrl}}absensimasuk/{{data.fotomasuk}}" class="avatar contact-avatar huge m-0">
+                <!-- <input type="file" id="imgupload" class="file_input" (change)="getFileAttachment($event)"
                  style="display:none"> -->
-             <div class="contact-name mt-8" style="color: blue;text-align: center;">{{data.jam_masuk}}</div>
-             <div class="contact-name mt-8">Absen Masuk</div>
-             <!-- <button  matTooltip="Tolak absen masuk" mat-button class="save-button" aria-label="tolak"
+                <div class="contact-name mt-8" style="color: blue;text-align: center;">{{data.jam_masuk}}</div>
+                <div class="contact-name mt-8">Absen Masuk</div>
+                <!-- <button  matTooltip="Tolak absen masuk" mat-button class="save-button" aria-label="tolak"
                  color="warn">
                 TOLAK
              </button> -->
-         </div>
-         <div>
-             <img src="{{imgUrl}}absenkeluar/{{data.fotokeluar}}" class="avatar contact-avatar huge m-0">
-             <!-- <input type="file" id="imgupload" class="file_input" (change)="getFileAttachment($event)"
+            </div>
+            <div *ngIf="data.fotokeluar !=='0'">
+                <img *ngIf="data.fotokeluar !=='0'" src="{{imgUrl}}absensikeluar/{{data.fotokeluar}}"
+                    class="avatar contact-avatar huge m-0">
+
+                <!-- <input type="file" id="imgupload" class="file_input" (change)="getFileAttachment($event)"
                  style="display:none"> -->
-                 <div class="contact-name mt-8" style="color: blue;text-align: center;">{{data.jam_keluar}}</div>
-                 <div class="contact-name mt-8">Absen Keluar</div>
-                 <!-- <button  matTooltip="Tolak absen keluar" mat-button class="save-button" aria-label="tolak"
+                <div class="contact-name mt-8" style="color: blue;text-align: center;" *ngIf="data.status==='0'">
+                    {{data.jam_keluar}}</div>
+                <div class="contact-name mt-8" style="color: blue;text-align: center;" *ngIf="data.status==='8'">--:--
+                </div>
+                <div class="contact-name mt-8">Absen Keluar</div>
+                <!-- <button  matTooltip="Tolak absen keluar" mat-button class="save-button" aria-label="tolak"
                  color="warn">
                 TOLAK
              </button> -->
-         </div>
-         </mat-toolbar-row>
+            </div>
+        </mat-toolbar-row>
+        <mat-toolbar-row class="toolbar-bottom py-16" fxLayout="row" fxLayout="row" fxLayoutAlign="space-evenly center">
+            <div *ngIf="data.fotoIstirahatK !== null">
+                <img *ngIf="data.fotoIstirahatK !== null" src="{{imgUrl}}absenkeluar/{{data.fotoIstirahatK}}"
+                    class="avatar contact-avatar huge m-0">
+                <!-- <input type="file" id="imgupload" class="file_input" (change)="getFileAttachment($event)"
+                 style="display:none"> -->
+                <div class="contact-name mt-8" style="color: blue;text-align: center;">{{data.istirahat_keluar}}</div>
+                <div class="contact-name mt-8">Istirahat Keluar</div>
+                <!-- <button  matTooltip="Tolak absen masuk" mat-button class="save-button" aria-label="tolak"
+                 color="warn">
+                TOLAK
+             </button> -->
+            </div>
+            <div *ngIf="data.fotoIstirahatM !== null">
+                <img *ngIf="data.fotoIstirahatM !== null" src="{{imgUrl}}absenmasuk/{{data.fotoIstirahatM}}"
+                    class="avatar contact-avatar huge m-0">
+
+                <!-- <input type="file" id="imgupload" class="file_input" (change)="getFileAttachment($event)"
+                 style="display:none"> -->
+                <div class="contact-name mt-8" style="color: blue;text-align: center;">
+                    {{data.istirahat_masuk}}</div>
+                <div class="contact-name mt-8">Istirahat Masuk</div>
+                <!-- <button  matTooltip="Tolak absen keluar" mat-button class="save-button" aria-label="tolak"
+                 color="warn">
+                TOLAK
+             </button> -->
+            </div>
+        </mat-toolbar-row>
         <form [formGroup]="absensiForm">
             <!-- <div fxLayout="row" fxLayoutAlign="start start">
                 <mat-form-field appearance="outline" fxFlex>
@@ -115,17 +148,16 @@
             DELETE
         </button>-->
 
-        <button *ngIf="auth.level == 2" mat-button class="save-button" (click)="dialogRef.close()"
-             aria-label="TUTUP">
+        <button mat-button class="save-button" (click)="dialogRef.close()" aria-label="TUTUP">
             TUTUP
         </button>
         <!-- (click)="dialogRef.close(['save',contactForm])" [disabled]="contactForm.invalid"  (click)="Cancel()"-->
-        <button *ngIf="auth.level == 1 || auth.level == 2" matTooltip="UPDATE" mat-button class="save-button" aria-label="UPDATE" color="accent"
-            [disabled]="data.status == 0" (click)="OnUpdate()">
+        <button *ngIf="auth.level == 1 || auth.level == 2" matTooltip="UPDATE" mat-button class="save-button"
+            aria-label="UPDATE" color="accent" [disabled]="data.status == 0" (click)="OnUpdate()">
             UPDATE
         </button>
-        <button *ngIf="auth.level == 1" (click)="Cancel()" matTooltip="BATALKAN" mat-button class="save-button" aria-label="BATALAKAN"
-            color="warn">
+        <button *ngIf="auth.level == 1" (click)="Cancel()" matTooltip="BATALKAN" mat-button class="save-button"
+            aria-label="BATALAKAN" color="warn">
             BATALKAN
         </button>
 

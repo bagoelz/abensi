@@ -17,17 +17,17 @@
                     person
                 </mat-icon>
                 <span class="logo-text h1" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
-                    Pengguna
+                    Pengaturan khusus
                 </span>
             </div>
             <!-- / APP TITLE -->
 
             <div class="logo mb-24 mb-md-0" fxLayout="row" fxLayoutAlign="start center" *ngIf="auth.level== 1">
                 <mat-form-field appearance="outline" class="category-selector" *ngIf="auth.level==1">
-                    <mat-label>Pilih Capdis</mat-label>
+                    <mat-label>Pilih Cabang</mat-label>
                     <mat-select [(ngModel)]="Capdis.pilih" (selectionChange)="onChange2($event.value)">
                         <mat-option [value]="'null'">
-                            Pilih Capdis
+                            Pilih Cabang
                         </mat-option>
                         <mat-option *ngFor=" let item of cabang" [value]="item.id">
                             {{item.nama}}
@@ -46,7 +46,7 @@
             <!-- / SEARCH -->
 
             <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0" (click)="tmbhCuti()">
-                <span>Tambah Cuti</span>
+                <span>Input data khusus</span>
             </button>
             <!-- / ADD BUTTON -->
         </div>

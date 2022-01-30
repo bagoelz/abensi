@@ -25,10 +25,10 @@
 
             <div class="logo mb-24 mb-md-0" fxLayout="row" fxLayoutAlign="start center" *ngIf="auth.level== 1">
                 <mat-form-field appearance="outline" class="category-selector" *ngIf="auth.level==1">
-                    <mat-label>Pilih Capdis</mat-label>
+                    <mat-label>Pilih Cabang</mat-label>
                     <mat-select [(ngModel)]="Capdis.pilih" (selectionChange)="onChange($event.value)">
                         <mat-option [value]="'null'">
-                            Pilih Capdis
+                            Pilih Cabang
                         </mat-option>
                         <mat-option *ngFor=" let item of cabang" [value]="item.id">
                             {{item.nama}}
@@ -45,19 +45,19 @@
             </button> -->
 
             <div>
-                <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0"
+                <!-- <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0"
                     style="margin-right: 10px !important" (click)="openKalendar()" *ngIf="auth.level==1">
                     <mat-icon style="size: 5px;">date_range</mat-icon><span> Kegiatan</span>
-                </button>
+                </button> -->
 
                 <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0"
                     style="margin-right: 10px !important" (click)="openJadwal()" *ngIf="auth.level==1">
                     <mat-icon style="size: 5px;">settings</mat-icon><span> Jadwal</span>
                 </button>
 
-                <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0" (click)="openDialog()">
+                <!-- <button mat-raised-button class="add-product-button fuse-white mt-24 mt-md-0" (click)="openDialog()">
                     <mat-icon style="size: 5px;">add</mat-icon><span> Pengguna</span>
-                </button>
+                </button> -->
             </div>
             <!-- / ADD BUTTON -->
 
@@ -74,6 +74,7 @@
                 <mat-chip (click)="sadmin()" *ngIf="auth.level==1">Super Admin</mat-chip>
                 <mat-chip (click)="admin()">Admin</mat-chip>
                 <mat-chip (click)="pengguna()">Pengguna</mat-chip>
+                <button mat-flat-button color="primary" [disabled]="selection.selected.length === 0" *ngIf="tombol" (click)="changeJadwal()">Tentukan Jadwal</button>
             </mat-chip-list>
 
             <!-- SEARCH -->
@@ -90,33 +91,54 @@
         <!-- CONTENT CARD -->
         <div class="content-card">
 
-            <mat-table #table [dataSource]="dataSource" matSort [@animateStagger]="{value:'50'}" fusePerfectScrollbar>
+            <mat-table #table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)" [@animateStagger]="{value:'50'}" fusePerfectScrollbar>
                 <!-- src="{{imgUrl}}{{contact.user_picture}}"  -->
+                <ng-container matColumnDef="select">
+                    <mat-cell mat-header-cell *matHeaderCellDef>
+                      <mat-checkbox (change)="$event ? masterToggle() : null"
+                                    [checked]="selection.hasValue() && isAllSelected()"
+                                    [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                    [aria-label]="checkboxLabel()">
+                      </mat-checkbox>
+                    </mat-cell>
+                 <mat-cell *matCellDef="let row">
+                      <mat-checkbox (click)="$event.stopPropagation()"
+                                    (change)="$event ? selection.toggle(row) : null"
+                                    [checked]="selection.isSelected(row)"
+                                    [aria-label]="checkboxLabel(row)">
+                      </mat-checkbox>
+                    </mat-cell>
+                  </ng-container>
                 <ng-container matColumnDef="avatar">
                     <mat-header-cell fxFlex="96px" *matHeaderCellDef></mat-header-cell>
                     <mat-cell fxFlex="96px" *matCellDef="let contact">
-                        <img class="avatar" *ngIf="contact.user_picture !== null"
+                        <img class="avatar" *ngIf="contact.user_picture !== ''"
                             src="{{imgUrl}}{{contact.user_picture}}" />
-                        <img class="avatar" *ngIf="contact.user_picture === null"
-                            src="https://www.pispi.or.id/images/default_photo.jpg" />
-                    </mat-cell>
-                </ng-container>
-
-                <ng-container matColumnDef="username">
-                    <mat-header-cell fxFlex="140px" *matHeaderCellDef>Username</mat-header-cell>
-                    <mat-cell fxFlex="140px" *matCellDef="let element">
-                        <p class="text-truncate">{{element.username}}</p>
+                        <img class="avatar" *ngIf="contact.user_picture === ''"
+                            src="assets/images/logos/logo.png" />
                     </mat-cell>
                 </ng-container>
 
                 <!-- ID Column -->
                 <ng-container matColumnDef="nama">
-                    <mat-header-cell fxFlex="300px" *matHeaderCellDef>Nama Lengkap</mat-header-cell>
+                    <mat-header-cell fxFlex="300px" *matHeaderCellDef mat-sort-header sortActionDescription="Sort by nama">Nama Lengkap</mat-header-cell>
                     <mat-cell fxFlex="300px" *matCellDef="let element">
                         <p class="text-truncate">{{element.fullname}}</p>
                     </mat-cell>
                 </ng-container>
                 <!-- Name Column -->
+                <ng-container matColumnDef="jabatan">
+                    <mat-header-cell fxFlex="350px" *matHeaderCellDef mat-sort-header sortActionDescription="Sort by jabatan">Jabatan</mat-header-cell>
+                    <mat-cell fxFlex="350px" *matCellDef="let element">
+                        <p class="text-truncate">{{element.jabatan}}</p>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="jadwal">
+                    <mat-header-cell fxFlex="250px" *matHeaderCellDef mat-sort-header sortActionDescription="Sort by jadwal">Jadwal</mat-header-cell>
+                    <mat-cell fxFlex="250px" *matCellDef="let element">
+                        <p class="text-truncate">{{element.keterangan}}</p>
+                    </mat-cell>
+                </ng-container>
 
                 <!-- Category Column -->
                 <ng-container matColumnDef="gender">

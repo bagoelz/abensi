@@ -5,14 +5,18 @@
 // export const environment = {
 //     production: false,
 //     hmr: false,
-//     BaseUrl: 'http://localhost/absensi/',
-//     ImageUrl: 'http://localhost/absensi//uploads/',
+// BaseUrl: 'http://localhost/absensi/',
+// ImageUrl: 'http://localhost/absensi//uploads/',
 // };
 export const environment = {
     production: false,
     hmr: false,
-    BaseUrl: 'https://it-mudah.com/backabsensi/',
-    ImageUrl: 'https://it-mudah.com/backabsensi/uploads/',
+    // BaseUrl: 'https://it-mudah.com/newabsensi/',
+    // ImageUrl: 'https://it-mudah.com/newabsensi//uploads/',
+    BaseUrl: 'https://prima.absensikantor.net/',
+    ImageUrl: 'http://prima.absensikantor.net/uploads/',
+    // BaseUrl: 'http://localhost/backend_prima/',
+    // ImageUrl: 'http://localhost/backend_prima/uploads/',
 };
 
 /*

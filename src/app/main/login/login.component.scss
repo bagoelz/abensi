@@ -10,6 +10,7 @@
         #login-form-wrapper {
             flex: 1 0 auto;
             padding: 32px;
+            background-color: #fb3e64;
 
             @include media-breakpoint('xs') {
                 padding: 16px;

@@ -51,11 +51,11 @@ export class CutiComponent implements OnInit {
   bulan: any;
   date: any = [];
   token: string;
-  auth:any=[];
-  cabang:any=[];
-  Capdis:any=[];
-  newArray:any=[];
-  ListAbsen:any=[];
+  auth: any = [];
+  cabang: any = [];
+  Capdis: any = [];
+  newArray: any = [];
+  ListAbsen: any = [];
   monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   /**
   * Constructor
@@ -90,7 +90,7 @@ export class CutiComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.token= JSON.parse(localStorage.getItem('TOKEN'));
+    this.token = JSON.parse(localStorage.getItem('TOKEN'));
     this.auth = JSON.parse(localStorage.getItem('AUTH'));
     this.date = moment().months();
     this.bulan = this.monthNames[this.date];
@@ -99,15 +99,15 @@ export class CutiComponent implements OnInit {
     this.getCapdis();
   }
 
-  
+
   getCapdis() {
     this.API.getCapdis(this.token).subscribe(result => {
-        result['Output'].forEach((item) => {
-            this.cabang.push({
-                'id': item.id_capdis,
-                'nama': item.nama,
-            });
+      result['Output'].forEach((item) => {
+        this.cabang.push({
+          'id': item.id_capdis,
+          'nama': item.nama,
         });
+      });
     });
   }
 
@@ -118,7 +118,7 @@ export class CutiComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     } else {
-      this.ListAbsen =  this.newArray.filter(s => s.id_capdis === e.toString());
+      this.ListAbsen = this.newArray.filter(s => s.id_capdis === e.toString());
       this.dataSource = new MatTableDataSource(this.ListAbsen);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -162,13 +162,13 @@ export class CutiComponent implements OnInit {
       panelClass: 'dialog',
       width: '500px',
       hasBackdrop: true,
-      data:{
-        lib : this.TmpCuti,
+      data: {
+        lib: this.TmpCuti,
       }
     });
 
     this.dialogRef.afterClosed().subscribe(result => {
-      if(result.event == 'update'){
+      if (result.event == 'update') {
         this.load(this.bulan);
       }
     });
@@ -196,7 +196,7 @@ export class CutiComponent implements OnInit {
   encapsulation: ViewEncapsulation.None
 })
 export class DetailCuti {
-  displayedColumns = ['no', 'mulai', 'selesai', 'keterangan','lampiran'];
+  displayedColumns = ['no', 'mulai', 'selesai', 'keterangan', 'lampiran'];
   dataSource: MatTableDataSource<any>;
   imgUrl = environment.ImageUrl;
 
@@ -250,8 +250,8 @@ export class DetailCuti {
     this.dataSource.sort = this.sort;
   }
 
-  seePreview(item){
-   window.open(environment.ImageUrl+'/spt/'+item.file,'_blank');
+  seePreview(item) {
+    window.open(environment.ImageUrl + '/spt/' + item.file, '_blank');
   }
 }
 
@@ -273,7 +273,7 @@ export class dialogCuti {
   tglmulai: Date;
   tglakhir: Date;
   uid: any;
-  minDate:Date;
+  minDate: Date;
   value2: any;
 
   filename: string = null;
@@ -282,10 +282,10 @@ export class dialogCuti {
   file: File = null;
   files: any = [];
   previewUrl: any = null;
-  capdis:String;
-  libCuti:any = [];
-  tmpFilterNip:any = [];
-  validasiBulan:Boolean;
+  capdis: String;
+  libCuti: any = [];
+  tmpFilterNip: any = [];
+  validasiBulan: Boolean;
 
   color = 'accent';
   mode = 'indeterminate';
@@ -340,7 +340,7 @@ export class dialogCuti {
     const _ = moment();
     const tmp = moment(newdate).add({ hours: _.hour(), minutes: _.minute(), seconds: _.second() });
     this.tglmulai = tmp.toDate();
-    if(this.ModelCuti.mulai !== undefined && this.ModelCuti.akhir !== undefined && this.ModelCuti.nip !== undefined){
+    if (this.ModelCuti.mulai !== undefined && this.ModelCuti.akhir !== undefined && this.ModelCuti.nip !== undefined) {
       this.Validate();
     }
   }
@@ -349,7 +349,7 @@ export class dialogCuti {
     const _ = moment();
     const tmp = moment(newdate).add({ hours: _.hour(), minutes: _.minute(), seconds: _.second() });
     this.tglakhir = tmp.toDate();
-    if(this.ModelCuti.mulai !== undefined && this.ModelCuti.akhir !== undefined && this.ModelCuti.nip !== undefined){
+    if (this.ModelCuti.mulai !== undefined && this.ModelCuti.akhir !== undefined && this.ModelCuti.nip !== undefined) {
       this.Validate();
     }
   }
@@ -365,7 +365,7 @@ export class dialogCuti {
       return item.nip === pil;
     });
     this.uid = this.tmpdata[0].user_id;
-    this.capdis= this.tmpdata[0].idcapdis;
+    this.capdis = this.tmpdata[0].idcapdis;
   }
 
   async getPegawai() {
@@ -400,24 +400,24 @@ export class dialogCuti {
 
   fileChange(event) {
     this.fileList = event.target.files;
-      this.file = this.fileList[0];
-      var mimeType = this.file.type;
-      if (mimeType.match(/pdf\/*/) == null) {
-        this.toastr.error('Fila harus berupa PDF','informasi')
-        return;
-      }
-      // console.log(this.filename);
-      // console.log(this.file);
-      this.filename = this.file.name;
-      this.files.push(this.file.name);
-      // console.log(this.files);
-     
-      var reader = new FileReader();
-      reader.readAsDataURL(this.file);
-      reader.onload = (_event) => {
-        this.previewUrl = reader.result;
-      };
-    
+    this.file = this.fileList[0];
+    var mimeType = this.file.type;
+    if (mimeType.match(/pdf\/*/) == null) {
+      this.toastr.error('Fila harus berupa PDF', 'informasi')
+      return;
+    }
+    // console.log(this.filename);
+    // console.log(this.file);
+    this.filename = this.file.name;
+    this.files.push(this.file.name);
+    // console.log(this.files);
+
+    var reader = new FileReader();
+    reader.readAsDataURL(this.file);
+    reader.onload = (_event) => {
+      this.previewUrl = reader.result;
+    };
+
   }
 
   deleteAttachment(index) {
@@ -451,22 +451,22 @@ export class dialogCuti {
     let mulai = this.tglmulai.valueOf() / 1000;
     let akhir = this.tglakhir.valueOf() / 1000;
     let hasil;
-    this.API.getValidate(uid, mulai, akhir).subscribe(result=>{
+    this.API.getValidate(uid, mulai, akhir).subscribe(result => {
       const status = result['status'];
-      if(!status){
+      if (!status) {
         this.toastr.warning(result['message'], "Cek tanggal SPT");
         this.validasiBulan = false;
-      }else{
+      } else {
         this.validasiBulan = true;
       }
-      });
+    });
   }
 
-  loadSpinner(){
+  loadSpinner() {
     this.spinnerWithoutBackdrop = true;
-    }
-  closeSpinner(){
-      this.spinnerWithoutBackdrop = false;
+  }
+  closeSpinner() {
+    this.spinnerWithoutBackdrop = false;
   }
 
   async simpan() {
@@ -474,7 +474,7 @@ export class dialogCuti {
     let mulai = this.tglmulai.valueOf() / 1000;
     let akhir = this.tglakhir.valueOf() / 1000;
     let ket = this.ModelCuti.ket;
-    if(this.file === null){
+    if (this.file === null) {
       alert('attachment harus di isi/dilampirkan');
       return;
     }
@@ -496,14 +496,14 @@ export class dialogCuti {
         this.closeSpinner();
         this.ModelCuti = [];
         this.toastr.success("Data berhasil disimpan", "Informasi");
-        this.dialogRef.close({event:'update'});
-      }else{
+        this.dialogRef.close({ event: 'update' });
+      } else {
         this.closeSpinner();
         this.toastr.error("Data gagal disimpan", "Informasi");
-        this.dialogRef.close({event:'cancel'});
+        this.dialogRef.close({ event: 'cancel' });
       }
     });
-   }
+  }
 }
 
 @Component({
@@ -539,13 +539,13 @@ export class tinjauGambar {
   }
 }
 
-function getUser(nip: string, nama: string, jabatan: string, capdis: string,idcapdis:number): UserMenu {
+function getUser(nip: string, nama: string, jabatan: string, capdis: string, idcapdis: number): UserMenu {
   return {
     nip: nip,
     nama: nama,
     jabatan: jabatan,
     capdis: capdis,
-    idcapdis:idcapdis,
+    idcapdis: idcapdis,
   };
 }
 
@@ -564,7 +564,7 @@ export interface UserMenu {
   nama: string;
   jabatan: string;
   capdis: string;
-  idcapdis:number;
+  idcapdis: number;
 }
 
 export const COMPONENT_LIST = [

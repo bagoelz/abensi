@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation, Inject, Injectable } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import { DataSource } from '@angular/cdk/collections';
 import { BehaviorSubject, fromEvent, merge, Observable, Subject, from } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -25,6 +25,9 @@ import { ToastrService } from 'ngx-toastr';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 // import { setTimeout } from 'timers';
 import * as moment from 'moment';
+import { JadwalapiService } from '../jadwal/jadwalapi.service';
+import { SelectionModel } from '@angular/cdk/collections';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
     selector: 'contacts-contact-list',
@@ -38,7 +41,7 @@ import * as moment from 'moment';
 export class Pengguna {
     imgUrl = environment.ImageUrl;
     dataSource: MatTableDataSource<MenuData>;
-    displayedColumns = ['avatar', 'username', 'nama', 'gender', 'status'];
+    displayedColumns = ['select', 'avatar', 'nama', 'jabatan', 'jadwal', 'gender', 'status'];
     cabang: any = [];
 
     list_table: MenuData[] = [];
@@ -47,11 +50,15 @@ export class Pengguna {
     list_pengguna: MenuData[] = [];
     listadmin: MenuData[] = [];
     listpengguna: MenuData[] = [];
-    Capdis:any=[];
+    selecTed
+    Capdis: any = [];
     auth: any = [];
     token: string;
-
+    listJadwal: any = [];
     jadwal: any = [];
+    selectedCabang: string;
+    tombol: boolean = true;
+    selection = new SelectionModel(true, []);
     /**
      * Constructor
      *
@@ -68,9 +75,11 @@ export class Pengguna {
         private toastr: ToastrService,
         http: HttpClient,
         private API: ApiService,
+        private apiJadwal: JadwalapiService,
         private router: Router,
         public _MatDialog: MatDialog,
-        private _fuseTranslationLoaderService: FuseTranslationLoaderService
+        private _fuseTranslationLoaderService: FuseTranslationLoaderService,
+        private _liveAnnouncer: LiveAnnouncer
     ) {
         this._fuseTranslationLoaderService.loadTranslations(english, turkish);
     }
@@ -87,7 +96,11 @@ export class Pengguna {
     ngOnInit() {
         this.initUser();
         this.loadJadwal();
+        this.getJadwalbaru();
+        //this.dataSource.data = []
+
     }
+
 
 
     loadJadwal() {
@@ -97,12 +110,11 @@ export class Pengguna {
     }
 
     async initUser() {
-        this.listadmin=[];
-        this.listpengguna=[];
-        this.cabang=[];
+        this.listadmin = [];
+        this.listpengguna = [];
         this.auth = JSON.parse(localStorage.getItem('AUTH'));
         this.token = JSON.parse(localStorage.getItem('TOKEN'));
-        if(this.auth.level === undefined || this.auth.level === null ){
+        if (this.auth.level === undefined || this.auth.level === null) {
             localStorage.clear();
             this.router.navigate(['/login']);
         }
@@ -111,56 +123,151 @@ export class Pengguna {
         this.getAdmin();
     }
 
+    getJadwalbaru() {
+        this.apiJadwal.getJadwalGroup().subscribe(result => {
+            this.listJadwal = result['Output'];
+        });
+    }
+
     getUser() {
         this.list_table = [];
         this.API.getPengguna(this.token).subscribe(result => {
-            if(this.auth.level ==2){
-                result['Output'].forEach((item)=>{
-                    if(item['capdis'] === this.auth.idCapdis){
+            if (this.auth.level == 2) {
+                result['Output'].forEach((item) => {
+                    if (item['capdis'] === this.auth.idCapdis) {
                         this.listpengguna.push(item);
-                        this.list_table.push(item);
+                        if (this.selectedCabang !== undefined) {
+                            this.list_table = this.listpengguna.filter(s => s.capdis === this.selectedCabang.toString());
+                        } else {
+                            this.list_table.push(item);
+                        }
+
                     }
                 });
-            }else{
+            } else {
                 this.listpengguna = result['Output'];
-                this.list_table = result['Output'];
+                if (this.selectedCabang !== undefined) {
+                    this.list_table = this.listpengguna.filter(s => s.capdis === this.selectedCabang.toString());
+                } else {
+                    this.list_table = result['Output'];
+                }
+
+
             }
-           
-            this.dataSource = new MatTableDataSource(this.listpengguna);
+
+            this.dataSource = new MatTableDataSource(this.list_table);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
         });
     }
 
+    announceSortChange(sortState: Sort) {
+        if (sortState.direction) {
+            this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+            if (sortState.direction === 'asc') {
+                if (sortState.active === 'nama') {
+                    this.dataSource = new MatTableDataSource(this.list_table.sort((a, b) => a.fullname.localeCompare(b.fullname)));
+                }
+                if (sortState.active === 'jabatan') {
+                    this.dataSource = new MatTableDataSource(this.list_table.sort((a, b) => a.jabatan.localeCompare(b.jabatan)));
+                }
+                if (sortState.active === 'jadwal') {
+                    this.dataSource = new MatTableDataSource(this.list_table.sort((a, b) => a.keterangan.localeCompare(b.keterangan)));
+                }
+
+            } else {
+                if (sortState.active === 'nama') {
+                    this.dataSource = new MatTableDataSource(this.list_table.sort((a, b) => b.fullname.localeCompare(a.fullname)));
+                }
+                if (sortState.active === 'jabatan') {
+                    this.dataSource = new MatTableDataSource(this.list_table.sort((a, b) => b.jabatan.localeCompare(a.jabatan)));
+                }
+                if (sortState.active === 'jadwal') {
+                    this.dataSource = new MatTableDataSource(this.list_table.sort((a, b) => b.keterangan.localeCompare(a.keterangan)));
+                }
+
+            }
+
+        } else {
+            this._liveAnnouncer.announce('Sorting cleared');
+            this.dataSource = new MatTableDataSource(this.listpengguna);
+        }
+    }
     getAdmin() {
         this.API.getAdmin(this.token).subscribe(result => {
-            if(this.auth.level ==2){
-                result['Output'].forEach((item)=>{
-                    if(item['capdis'] === this.auth.idCapdis){
+            if (this.auth.level == 2) {
+                result['Output'].forEach((item) => {
+                    if (item['capdis'] === this.auth.idCapdis) {
                         this.listadmin.push(item);
                     }
-                })  
-            }else{
+                })
+            } else {
                 this.listadmin = result['Output'];
             }
-           
+
         });
     }
 
 
     getCapdis() {
-        this.API.getCapdis(this.token).subscribe(result => {
-            result['Output'].forEach((item) => {
-                this.cabang.push({
-                    'id': item.id_capdis,
-                    'nama': item.nama,
+        if (this.selectedCabang !== undefined) {
+            this.Capdis.pilih = this.selectedCabang;
+            this.onChange(this.selectedCabang);
+        } else {
+            this.API.getCapdis(this.token).subscribe(result => {
+                result['Output'].forEach((item) => {
+                    this.cabang.push({
+                        'id': item.id_capdis,
+                        'nama': item.nama,
+                    });
                 });
             });
+        }
+
+    }
+    changeJadwal() {
+        const dialogRef = this._MatDialog.open(jadwal, {
+            panelClass: 'dialog',
+            width: '80%',
+            hasBackdrop: true,
+            data: { jadwal: this.jadwal, users: this.selection.selected }
+
         });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result !== undefined) this.initUser()
+            //this.loadJadwal();
+        });
+    }
+
+    isAllSelected() {
+        let numSelected = 0;
+        let numRows = 0;
+        if (this.dataSource !== undefined) {
+            numSelected = this.selection.selected.length;
+            numRows = this.dataSource.data.length;
+        }
+        return numSelected === numRows;
+    }
+
+    /** Selects all rows if they are not all selected; otherwise clear selection. */
+    masterToggle() {
+        this.isAllSelected() ?
+            this.selection.clear() :
+            this.dataSource.data.forEach(row => this.selection.select(row));
+    }
+
+    /** The label for the checkbox on the passed row */
+    checkboxLabel(row?: any): string {
+        if (!row) {
+            return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
+        }
+        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
     }
 
     onChange(e) {
         if (e === 'null') {
+            this.selectedCabang = null;
             setTimeout(() => {
                 this.getAdmin();
                 this.getUser();
@@ -169,6 +276,7 @@ export class Pengguna {
                 this.dataSource.sort = this.sort;
             }, 500);
         } else {
+            this.selectedCabang = e.toString();
             this.list_cabang = [];
             this.list_cabang = this.list_table.filter(s => s.capdis === e.toString());
             this.dataSource = new MatTableDataSource(this.list_cabang);
@@ -178,10 +286,11 @@ export class Pengguna {
     }
 
     admin() {
+        this.tombol = false;
         this.list_table = [];
-        if(this.Capdis.pilih == undefined || this.Capdis.pilih === null){
+        if (this.Capdis.pilih == undefined || this.Capdis.pilih === null) {
             this.list_table = this.listadmin.filter(s => s.level === "2");
-        }else{
+        } else {
             this.list_table = this.listadmin.filter(s => s.level === "2" && s.capdis === this.Capdis.pilih);
         }
         //this.list_table=this.listadmin;
@@ -193,12 +302,13 @@ export class Pengguna {
     }
 
     sadmin() {
+        this.tombol = false;
         this.list_table = [];
-        if(this.Capdis.pilih === undefined || this.Capdis.pilih === null){
+        if (this.Capdis.pilih === undefined || this.Capdis.pilih === null) {
             this.list_table = this.listadmin.filter(s => s.level === "1");
-        }else{
+        } else {
             this.list_table = this.listadmin.filter(s => s.level === "1" && s.capdis === this.Capdis.pilih);
-           
+
         }
         //this.list_table=this.listadmin;
         setTimeout(() => {
@@ -209,13 +319,14 @@ export class Pengguna {
     }
 
     pengguna() {
+        this.tombol = true;
         this.list_table = [];
-        if(this.Capdis.pilih == undefined || this.Capdis.pilih === null){
+        if (this.Capdis.pilih == undefined || this.Capdis.pilih === null) {
             this.list_table = this.listpengguna.filter(s => s.level === "3");
-        }else{
+        } else {
             this.list_table = this.listpengguna.filter(s => s.level === "3" && s.capdis === this.Capdis.pilih);
         }
-        
+
         //this.list_table = this.listpengguna;
         // console.log(this.list_admin);
         setTimeout(() => {
@@ -238,14 +349,14 @@ export class Pengguna {
             panelClass: 'dialog',
             width: '500px',
             hasBackdrop: true,
-            data: item,
+            data: { row: item, jadwal: this.listJadwal }
         });
 
         dialogRef.afterClosed().subscribe(result => {
             // this.getUser();
             // this.getCapdis();
             // this.getAdmin();
-            if(result.event !== 'cancel'){
+            if (result !== 'cancel') {
                 this.initUser();
             }
         });
@@ -256,17 +367,17 @@ export class Pengguna {
             panelClass: 'dialog',
             width: '500px',
             hasBackdrop: true,
-            // data: this.auth,
+            data: { jadwal: this.listJadwal, },
         });
 
         dialogRef.afterClosed().subscribe(result => {
             // this.getUser();
             // this.getCapdis();
             // this.getAdmin();
-            if(result.event !== 'cancel'){
+            if (result.event !== 'cancel') {
                 this.initUser();
             }
-            
+
         });
     }
 
@@ -275,16 +386,18 @@ export class Pengguna {
     }
 
     openJadwal() {
-        const dialogRef = this._MatDialog.open(jadwal, {
-            panelClass: 'dialog',
-            width: '400px',
-            hasBackdrop: true,
-            data: this.jadwal
-        });
+        // const dialogRef = this._MatDialog.open(jadwal, {
+        //     panelClass: 'dialog',
+        //     width: '400px',
+        //     hasBackdrop: true,
+        //     data: this.jadwal
+        // });
 
-        dialogRef.afterClosed().subscribe(result => {
-            this.loadJadwal();
-        });
+        // dialogRef.afterClosed().subscribe(result => {
+        //     this.loadJadwal();
+        // });
+        this.router.navigate(['/jadwal']);
+
     }
 }
 
@@ -307,9 +420,12 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 })
 export class jadwal {
     dataSource: MatTableDataSource<any>;
-    displayedColumns = ['hari', 'masuk', 'keluar'];
-    namahari=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat'];
-    ListJadwal:any=[];
+    namahari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+    displayedColumns = ['no', 'keterangan', 'statusabsen', 'harikerja', 'jamkerja', 'bolehabsen', 'toleransi'];
+    ListJadwal: any = [];
+    listUsers: any = [];
+    selectedJadwal: any;
+    token: string;
     /**
     * Constructor
     *
@@ -336,30 +452,37 @@ export class jadwal {
     }
 
     ngOnInit(): void {
-        this.data.forEach(item => {
-            this.ListJadwal.push({
-                'id':item.id,
-                'masuk':item.masuk,
-                'pulang':item.pulang,
-                'hari':this.namahari[item.id],
-            })
+        this.listUsers = [];
+        this.token = JSON.parse(localStorage.getItem('TOKEN'));
+        this.ListJadwal = this.data.jadwal;
+        this.data.users.forEach(element => {
+            this.listUsers.push({ 'userid': element.user_id, 'nama': element.fullname })
         });
         this.dataSource = new MatTableDataSource(this.ListJadwal);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
     }
-
-    update(e) {
-        const dialogRef = this._MatDialog.open(SettingJadwal, {
-            panelClass: 'dialog',
-            width: '35%',
-            hasBackdrop: true,
-            data: e
+    getRow(e) {
+        this.selectedJadwal = e;
+    }
+    OnUpdate(e) {
+        this.API.changeUserJadwal(this.token, this.selectedJadwal.id, this.listUsers).subscribe(result => {
+            if (result.status === 'OK') {
+                this.dialogRef.close('load');
+            } else {
+                this.toastr.error(result.message, 'Perhatian');
+            }
         });
+        // const dialogRef = this._MatDialog.open(SettingJadwal, {
+        //     panelClass: 'dialog',
+        //     width: '35%',
+        //     hasBackdrop: true,
+        //     data: e
+        // });
 
-        dialogRef.afterClosed().subscribe(result => {
-            this.dialogRef.close();
-        });
+        // dialogRef.afterClosed().subscribe(result => {
+        //     this.dialogRef.close();
+        // });
     }
 }
 
@@ -376,7 +499,7 @@ export class SettingJadwal {
     timeArr2: any = [];
     starttime: any;
     endtime: any;
-    token:any;
+    token: any;
     toggle: boolean = false;
     buttonDisabled: boolean = true;
     constructor(
@@ -393,8 +516,8 @@ export class SettingJadwal {
 
         // console.log(this.data);
 
-        let masuk = this.data.masuk;
-        let pulang = this.data.pulang;
+        let masuk = this.data.row.masuk;
+        let pulang = this.data.row.pulang;
 
         this.timeArr = masuk.split(':');
         this.timeArr2 = pulang.split(':');
@@ -407,7 +530,7 @@ export class SettingJadwal {
         this.endtime = moment(date2).format("HH:mm");
 
         this.jadwalForm = this.createEventForm();
-       
+
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -437,7 +560,7 @@ export class SettingJadwal {
         let masuk = this.jadwalForm.value.start;
         let pulang = this.jadwalForm.value.end;
         // console.log(masuk);
-        this.API.updateJadwal(this.token,this.data.id, masuk, pulang).subscribe(result => {
+        this.API.updateJadwal(this.token, this.data.id, masuk, pulang).subscribe(result => {
             if (result.status === 200) {
                 this.dialogRef.close();
             }
@@ -494,7 +617,8 @@ export class tambahPengguna {
     imageChangedEvent: any = '';
     gambar: any;
     imgUrl = environment.ImageUrl;
-
+    listJadwal: any = []
+    jadwalBaru: any = []
     file: any;
     fileData: File = null;
     previewUrl: any = null;
@@ -502,9 +626,8 @@ export class tambahPengguna {
     uploadedFilePath: string = null;
     auth: any = [];
     matcher = new MyErrorStateMatcher();
-    token:string;
+    token: string;
     title: string;
-
     flag: boolean = false;
 
     editable: boolean;
@@ -522,6 +645,7 @@ export class tambahPengguna {
         private toastr: ToastrService,
         http: HttpClient,
         private API: ApiService,
+
         public _MatDialog: MatDialog,
         public dialogRef: MatDialogRef<tambahPengguna>,
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -537,8 +661,9 @@ export class tambahPengguna {
     jkControl = new FormControl('', [Validators.required]);
     cpControl = new FormControl('', [Validators.required]);
     jbtnControl = new FormControl('', [Validators.required]);
-    hpControl = new FormControl('', [Validators.required, Validators.pattern('^[0-9.,]+$')]);
+    hpControl = new FormControl('', [Validators.pattern('^[0-9.,]+$')]);
     lvlControl = new FormControl('', [Validators.required]);
+    stsabsen = new FormControl('', [Validators.required]);
     usernameControl = new FormControl('', [Validators.required]);
     passControl = new FormControl('', [Validators.required, (control) => this.validatePasswords(control, 'passControl')]);
     confpassControl = new FormControl('', [Validators.required, (control) => this.validatePasswords(control, 'confpassControl')]);
@@ -555,33 +680,35 @@ export class tambahPengguna {
         cpControlGroup: this.cpControl,
         jbtnControlGroup: this.jbtnControl,
         hpControlGroup: this.hpControl,
+        stsabsenGroup: this.stsabsen,
     });
 
     ngOnInit() {
         // this.getCapdis();
         // this.getJabatan();
+        this.jadwalBaru = this.data.jadwal;
         this.auth = JSON.parse(localStorage.getItem('AUTH'));
         this.token = JSON.parse(localStorage.getItem('TOKEN'));
-        console.log(this.data)
-        if (this.data !== null) {
+        if (this.data.row !== undefined) {
             this.title = 'Edit Pengguna';
             this.flag = true;
-            this.ModelPengguna.username = this.data.username;
-            this.ModelPengguna.nip = this.data.nip;
-            this.ModelPengguna.nama_lengkap = this.data.fullname;
-            this.ModelPengguna.jabatan = this.data.jabatan;
-            this.ModelPengguna.gender = this.data.gender;
-            this.ModelPengguna.hp = this.data.hp;
-            this.ModelPengguna.capdis = this.data.capdis;
-            this.ModelPengguna.level = this.data.level;
+            this.ModelPengguna.username = this.data.row.username;
+            this.ModelPengguna.nip = this.data.row.nip;
+            this.ModelPengguna.nama_lengkap = this.data.row.fullname;
+            this.ModelPengguna.jabatan = this.data.row.jabatan;
+            this.ModelPengguna.gender = this.data.row.gender;
+            this.ModelPengguna.hp = this.data.row.hp;
+            this.ModelPengguna.capdis = this.data.row.capdis;
+            this.ModelPengguna.level = this.data.row.level;
+            this.ModelPengguna.jadwal = this.data.row.jadwalMasukBaru;
             this.editable = true;
-            if (this.data.user_picture === null) {
+            if (this.data.row.user_picture === null) {
                 this.gambar = '';
             }
-            else if (this.data.user_picture !== null) {
-                this.gambar = this.imgUrl + this.data.user_picture;
+            else if (this.data.row.user_picture !== null) {
+                this.gambar = this.imgUrl + this.data.row.user_picture;
             }
-            
+
             this.getCapdis();
             this.getJabatan();
         } else {
@@ -630,20 +757,20 @@ export class tambahPengguna {
     getCapdis() {
         this.API.getCapdis(this.token).subscribe(result => {
             result['Output'].forEach((item) => {
-                if(this.auth.level == 2){
-                    if(item.id_capdis === this.auth.idCapdis){
+                if (this.auth.level == 2) {
+                    if (item.id_capdis === this.auth.idCapdis) {
                         this.cabang.push({
-                        'id': item.id_capdis,
-                        'nama': item.nama,
-                    });
+                            'id': item.id_capdis,
+                            'nama': item.nama,
+                        });
                     }
-                }else{
+                } else {
                     this.cabang.push({
                         'id': item.id_capdis,
                         'nama': item.nama,
                     });
                 }
-               
+
             });
         });
     }
@@ -659,6 +786,8 @@ export class tambahPengguna {
         });
     }
 
+
+
     approve() {
         let a = '1';
         this.action = ['approve', 0];
@@ -667,17 +796,17 @@ export class tambahPengguna {
             hasBackdrop: true,
             data: this.action,
         });
-        
-            this.API.approve(this.token,this.data.user_id, a).subscribe(result => {
-                if(result.status='200'){
-                    dialogRef.close();
+
+        this.API.approve(this.token, this.data.row.user_id, a).subscribe(result => {
+            if (result.status = '200') {
+                dialogRef.close();
                 location.reload();
-                }else{
-                    this.toastr.error(result.message,'Validasi gagal')
-                }
-                
-            });
-       
+            } else {
+                this.toastr.error(result.message, 'Validasi gagal')
+            }
+
+        });
+
     }
 
     get password1(): AbstractControl {
@@ -712,91 +841,91 @@ export class tambahPengguna {
     }
 
     addPengguna() {
-        this.API.addUser(this.token,this.ModelPengguna.username, this.ModelPengguna.password,this.ModelPengguna.hp, this.ModelPengguna.nama_lengkap, this.ModelPengguna.nip,
-            this.ModelPengguna.jabatan, this.ModelPengguna.gender, this.ModelPengguna.capdis, this.ModelPengguna.level, this.file).subscribe(result => {
+        this.API.addUser(this.token, this.ModelPengguna.username, this.ModelPengguna.password, this.ModelPengguna.hp, this.ModelPengguna.nama_lengkap, this.ModelPengguna.nip,
+            this.ModelPengguna.jabatan, this.ModelPengguna.gender, this.ModelPengguna.capdis, this.ModelPengguna.level, this.file, this.ModelPengguna.jadwal).subscribe(result => {
                 const status = result['status'];
                 const desc = result['message'];
 
                 if (status === 200) {
                     this.ModelPengguna = [];
-                    this.dialogRef.close({event:'save'});
+                    this.dialogRef.close({ event: 'save' });
                     this.SaveToaster();
-                }else{
-                    this.dialogRef.close({event:'cancel'});
+                } else {
+                    this.dialogRef.close({ event: 'cancel' });
                     this.ErrorToaster(desc);
                 }
             });
     }
 
     addPengguna2() {
-        this.API.addUser2(this.token,this.ModelPengguna.username, this.ModelPengguna.password, this.ModelPengguna.nama_lengkap, this.ModelPengguna.nip,
-            this.ModelPengguna.jabatan, this.ModelPengguna.gender, this.ModelPengguna.capdis, this.ModelPengguna.level).subscribe(result => {
+        this.API.addUser2(this.token, this.ModelPengguna.username, this.ModelPengguna.password, this.ModelPengguna.nama_lengkap, this.ModelPengguna.nip,
+            this.ModelPengguna.jabatan, this.ModelPengguna.gender, this.ModelPengguna.capdis, this.ModelPengguna.level, this.ModelPengguna.stsabsen).subscribe(result => {
                 const status = result['status'];
                 const desc = result['message'];
 
                 if (status === 200) {
                     this.ModelPengguna = [];
-                    this.dialogRef.close({event:'save'});
+                    this.dialogRef.close({ event: 'save' });
                     this.SaveToaster();
-                }else{
-                    this.dialogRef.close({event:'cancel'});
+                } else {
+                    this.dialogRef.close({ event: 'cancel' });
                     this.ErrorToaster(desc);
-                    
+
                 }
             });
         //this.dialogRef.close();
-        
+
     }
 
-    hapusPengguna(){
-        this.API.deleteUser(this.token,this.data.user_id,this.ModelPengguna.user_picture,this.ModelPengguna.level).subscribe(result=>{
+    hapusPengguna() {
+        this.API.deleteUser(this.token, this.data.row.user_id, this.ModelPengguna.user_picture, this.ModelPengguna.level).subscribe(result => {
             const status = result['status'];
             const desc = result['message'];
             if (status === 200) {
-                this.dialogRef.close({event:'delete'});
-            }else{
-                this.dialogRef.close({event:'cancel'});
+                this.dialogRef.close({ event: 'delete' });
+            } else {
+                this.dialogRef.close({ event: 'cancel' });
                 this.ErrorToaster(desc);
             }
         });
     }
     updatePengguna() {
         if (this.file === undefined) {
-            this.API.updateUser(this.token,this.data.user_id,this.ModelPengguna.hp, this.ModelPengguna.username, this.ModelPengguna.nama_lengkap, this.ModelPengguna.nip, this.ModelPengguna.jabatan,
-                this.ModelPengguna.gender, this.ModelPengguna.capdis, this.ModelPengguna.level).subscribe(result => {
+            this.API.updateUser(this.token, this.data.row.user_id, this.ModelPengguna.hp, this.ModelPengguna.username, this.ModelPengguna.nama_lengkap, this.ModelPengguna.nip, this.ModelPengguna.jabatan,
+                this.ModelPengguna.gender, this.ModelPengguna.capdis, this.ModelPengguna.level, this.ModelPengguna.jadwal).subscribe(result => {
                     const status = result['status'];
                     const desc = result['desc'];
                     if (status === 200) {
-                        this.dialogRef.close({event:'update'});
-                    }else{
-                        this.dialogRef.close({event:'cancel'});
+                        this.dialogRef.close({ event: 'update' });
+                    } else {
+                        this.dialogRef.close({ event: 'cancel' });
                         this.ErrorToaster(desc);
                     }
 
                 });
         } else {
-            this.API.updateUser2(this.data.user_id,this.ModelPengguna.user_picture,this.ModelPengguna.hp, this.ModelPengguna.username, this.ModelPengguna.nama_lengkap, this.ModelPengguna.nip, this.ModelPengguna.jabatan,
-                this.ModelPengguna.gender,this.ModelPengguna.capdis, this.ModelPengguna.level, this.file).subscribe(result => {
+            this.API.updateUser2(this.data.row.user_id, this.ModelPengguna.user_picture, this.ModelPengguna.hp, this.ModelPengguna.username, this.ModelPengguna.nama_lengkap, this.ModelPengguna.nip, this.ModelPengguna.jabatan,
+                this.ModelPengguna.gender, this.ModelPengguna.capdis, this.ModelPengguna.level, this.file).subscribe(result => {
                     const status = result['status'];
                     const desc = result['desc'];
                     if (status === 200) {
-                        this.dialogRef.close({event:'update'});
-                    }else{
-                        this.dialogRef.close({event:'cancel'});
+                        this.dialogRef.close({ event: 'update' });
+                    } else {
+                        this.dialogRef.close({ event: 'cancel' });
                         this.ErrorToaster(desc);
                     }
                 });
         }
-       
+
     }
 
     onClick(): void {
-        if(this.ModelPengguna.username === undefined){
+        if (this.ModelPengguna.username === undefined) {
             alert('username tidak boleh kosong');
             return;
         }
 
-        if(this.file === undefined){
+        if (this.file === undefined) {
             alert('gambar harus dipilih');
             return;
         }
@@ -955,14 +1084,14 @@ export class UpdatePassword {
     }
 
     onUpdate() {
-        this.API.updatepass(this.data.user_id, this.newpassword, this.data.level).subscribe(result => {
+        this.API.updatepass(this.data.row.user_id, this.newpassword, this.data.row.level).subscribe(result => {
             if (result.status == 'OK') {
                 this.dialogRef.close();
                 location.reload()
-            }else{
+            } else {
                 this.toastr.success("Ganti Password gagal", "Warning");
             }
-            
+
         });
     }
 }
@@ -975,6 +1104,7 @@ export interface MenuData {
     fullname: string;
     jabatan: string;
     user_picture: string;
+    keterangan: string;
     gender: number;
     capdis: string;
     created: any;
